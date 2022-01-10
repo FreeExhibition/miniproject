@@ -7,7 +7,7 @@
 김정진
 이정민
 천강효
-이수민
+이수현
 
 ## git commit 규칙
 
@@ -34,7 +34,7 @@ const userName = 'James';
 ```html
 
 // bad case
-<div id="userName"></div>
+<div id="UserName"></div>
 
 // good case
 <div id="userName"></div>

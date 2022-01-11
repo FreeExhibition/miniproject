@@ -15,20 +15,11 @@
     <style>
         .header-box {
             text-align: center;
-            margin: 60px 0;
-        }
-
-        .header-box h1 {
-            font-size: 42px;
-        }
-
-        .header-box h5 {
-            font-size: 18px;
-            padding-top: 10px;
+            margin: 100px 0;
         }
 
         section {
-            min-height: 350px;
+            min-height: 400px;
         }
 
         .link-box {
@@ -36,13 +27,13 @@
             margin-bottom: 80px;
         }
 
-        .register-box {
+        .login-box {
             width: 70%;
             max-width: 400px;
             margin: auto;
         }
 
-        .register-btn {
+        .login-btn {
             display: block;
             margin: auto;
         }
@@ -57,10 +48,72 @@
 
     <!--  javascript  -->
     <script>
-
+        {% if msg %}
+            alert("{{ msg }}")
+        {% endif %}
+        // ['쿠키'라는 개념에 대해 알아봅시다]
+        // 로그인을 구현하면, 반드시 쿠키라는 개념을 사용합니다.
+        // 페이지에 관계없이 브라우저에 임시로 저장되는 정보입니다. 키:밸류 형태(딕셔너리 형태)로 저장됩니다.
+        // 쿠키가 있기 때문에, 한번 로그인하면 네이버에서 다시 로그인할 필요가 없는 것입니다.
+        // 브라우저를 닫으면 자동 삭제되게 하거나, 일정 시간이 지나면 삭제되게 할 수 있습니다.
+        function login() {
+            $.ajax({
+                type: "POST",
+                url: "/users/login",
+                data: {
+                    id_give: $('#userId').val(),
+                    pw_give: $('#userPw').val()
+                },
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        // 로그인이 정상적으로 되면, 토큰을 받아옵니다.
+                        // 이 토큰을 mytoken이라는 키 값으로 쿠키에 저장합니다.
+<!--                        $.cookie('mytoken', response['token']);-->
+                        console.log(response['token'])
+                        alert('로그인 완료!')
+                        window.location.href = '/'
+                    } else {
+                        // 로그인이 안되면 에러메시지를 띄웁니다.
+                        alert(response['msg'])
+                    }
+                }
+            })
+        }
     </script>
 </head>
 <body>
-
+<div class="wrap">
+    <header class="header-box">
+        <h1 class="title is-3 is-spaced"><a href="/">전시프리</a></h1>
+        <p>무료한 일상 속에서 전시회로 마음의 평화를 찾아보세요.</p>
+    </header>
+    <section>
+        <div class="link-box">
+            <p>회원이 아직 아니신가요? <a href="/register">회원가입 하기</a></p>
+        </div>
+        <div class="login-box">
+            <div class="field">
+                <p class="control has-icons-left has-icons-right">
+                    <input id="userId" class="input is-rounded" type="text" placeholder="아이디">
+                    <span class="icon is-small is-left">
+                      <i class="fas fa-user"></i>
+                    </span>
+                </p>
+            </div>
+            <div class="field">
+                <p class="control has-icons-left">
+                    <input id="userPw" class="input is-rounded" type="password" placeholder="비밀번호">
+                    <span class="icon is-small is-left">
+                      <i class="fas fa-lock"></i>
+                    </span>
+                </p>
+            </div>
+            <button onclick="login()" class="button login-btn is-primary is-rounded">로그인하기</button>
+        </div>
+    </section>
+    <footer class="footer footer-box">
+        <p class="content has-text-centered">&copy; 2022 항해99 5D 12팀</p>
+    </footer>
+</div>
 </body>
 </html>

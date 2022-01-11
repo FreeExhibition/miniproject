@@ -15,20 +15,11 @@
     <style>
         .header-box {
             text-align: center;
-            margin: 60px 0;
-        }
-
-        .header-box h1 {
-            font-size: 42px;
-        }
-
-        .header-box h5 {
-            font-size: 18px;
-            padding-top: 10px;
+            margin: 100px 0;
         }
 
         section {
-            min-height: 350px;
+            min-height: 500px;
         }
 
         .link-box {
@@ -42,14 +33,20 @@
             margin: auto;
         }
 
+        #userId {
+            width: 75%;
+        }
+
         .register-btn {
-            display: block;
-            margin: auto;
+            text-align: center;
         }
 
         .footer-box p {
             color: #999;
         }
+
+
+
     </style>
 
     <!--  Jquery  -->
@@ -75,9 +72,102 @@
                 }
             })
         }
+
+        function isUser(asValue) {
+            var regExp = /^(?=.*[a-zA-Z])[a-zA-Z0-9]{2,10}$/;
+            return regExp.test(asValue);
+        }
+
+        function is_password(asValue) {
+            var regExp = /^(?=.*\d)(?=.*[a-zA-Z])[0-9a-zA-Z!@#$%^&*]{8,20}$/;
+            return regExp.test(asValue);
+        }
+
+        function checkDup() {
+            let userId = $("#userId").val()
+            console.log(userId)
+            if (userId == "") {
+                $("#helpId").text("아이디를 입력해주세요.").removeClass("is-safe").addClass("is-danger")
+                $("#userId").focus()
+                return;
+            }
+            if (!isUser(userId)) {
+                $("#helpId").text("아이디의 형식을 확인해주세요. 영문과 숫자만 사용 가능. 2-10자 길이").removeClass("is-safe").addClass("is-danger")
+                $("#userId").focus()
+                return;
+            }
+            $("#helpId").addClass("is-loading")
+            $.ajax({
+                type: "POST",
+                url: "/users/checkDup",
+                data: {
+                    username_give: userId
+                },
+                success: function (response) {
+
+                    if (response["exists"]) {
+                        $("#helpId").text("이미 존재하는 아이디입니다.").removeClass("is-safe").addClass("is-danger")
+                        $("#userId").focus()
+                    } else {
+                        $("#helpId").text("사용할 수 있는 아이디입니다.").removeClass("is-danger").addClass("is-success")
+                    }
+                    $("#helpId").removeClass("is-loading")
+
+                }
+            });
+        }
+
     </script>
 </head>
 <body>
-
+<div class="wrap">
+    <header class="header-box">
+        <h1 class="title is-3 is-spaced"><a href="/">전시프리</a></h1>
+        <p>무료한 일상 속에서 전시회로 마음의 평화를 찾아보세요.</p>
+    </header>
+    <section>
+        <div class="link-box">
+            <p>이미 회원이신가요? <a href="/login">로그인 하기</a></p>
+        </div>
+        <div class="register-box">
+            <div class="field">
+                <p class="control has-icons-left has-icons-right">
+                    <input id="userId" class="input" type="text" placeholder="아이디">
+                    <span class="icon is-small is-left">
+                      <i class="fas fa-user"></i>
+                    </span>
+                    <button onclick="" class="button is-primary">중복확인</button>
+                </p>
+                <small id="helpId">아이디는 2~10자의 영문과 숫자만 입력 가능합니다.</small>
+            </div>
+            <div class="field">
+                <p class="control has-icons-left">
+                    <input id="userPw" class="input" type="password" placeholder="비밀번호">
+                    <span class="icon is-small is-left">
+                      <i class="fas fa-lock"></i>
+                    </span>
+                </p>
+                <small>영문과 숫자 조합의 8~20자의 비밀번호를 설정해주세요.</br>
+                    특수문자(!@#$%^&*)도 사용 사능합니다.</small>
+            </div>
+            <div class="field">
+                <p class="control has-icons-left">
+                    <input id="userPwCheck" class="input" type="password" placeholder="비밀번호 확인">
+                    <span class="icon is-small is-left">
+                      <i class="fas fa-lock"></i>
+                    </span>
+                </p>
+                <small>비밀번호가 일치합니다.</small>
+            </div>
+            <div class="register-btn">
+                <button onclick="register()" class="button is-primary">회원가입하기</button>
+                <button onclick="window.location.href='/'" class="button">홈으로가기</button>
+            </div>
+        </div>
+    </section>
+    <footer class="footer footer-box">
+        <p class="content has-text-centered">&copy; 2022 항해99 5D 12팀</p>
+    </footer>
+</div>
 </body>
 </html>

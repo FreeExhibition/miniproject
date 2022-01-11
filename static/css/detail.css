@@ -1,0 +1,81 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+}
+
+button {
+    background-color: #fff;
+    margin: 10px;
+}
+
+.header-box {
+    margin: 10px auto;
+    text-align: center;
+    position: relative;
+}
+
+.header-box h1 {
+    font-size: 42px;
+}
+
+.header-box h5 {
+    font-size: 18px;
+    padding-top: 10px;
+}
+
+.right-nav {
+    position: absolute;
+    right: 50px;
+    top: 50px;
+    display: flex;
+
+}
+
+.exhibition-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+}
+
+.exhibition-img-box {
+    margin: 50px;
+}
+
+.exhibition-img {
+    width: 200px;
+}
+
+.exhibition-detail-box {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.write-review-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding-bottom: 30px;
+}
+.input-review {
+    width: 300px;
+    height: 30px;
+}
+
+.review-box {
+    display: flex;
+    /*justify-content: center;*/
+    align-items: center;
+    margin: 0 auto;
+}
+user-id {
+    text-align: start;
+}

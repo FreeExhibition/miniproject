@@ -1,10 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!--  Bulma CSS, Font Awesome  -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+          integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <title>전시프리 - 서울 무료 전시회</title>
+    <link rel="stylesheet" href="../static/css/detail.css">
+    <script src="../static/js/detail.js" defer></script>
 </head>
+
 <body>
-$END$
+<div class="detail-wrapper">
+    <header class="header-box">
+        <h1>전시 프리</h1>
+        <h5>무료한 일상 속에서 전시회로 마음의 평화를 찾아보세요.</h5>
+        <div class="right-nav">
+            <button id="loginBtn" onclick="moveLoginPage()">로그인</button>
+        </div>
+    </header>
+</div>
+<section>
+    <div class="exhibition-info">
+        <div class="exhibition-img-box">
+{#            <img class="exhibition-img" src="../static/images/test.jpeg" alt="test">#}
+            <img src={{ exhibition.img_url }}>
+        </div>
+        <div class="exhibition-detail-box">
+            <p>{{ exhibition.title }}</p>
+            <p>{{ exhibition.init_date }} ~ {{ exhibition.end_date }}</p>
+            <p>홈페이지 주소</p>
+            <p>{{ exhibition.place }}</p>
+        </div>
+    </div>
+    <div class="write-review-box">
+        <input id="inputReview" class="input-review" type="text" maxlength="80" placeholder="리뷰를 달아주세요.">
+        <button id="addReview" class="add-review" onclick="addReview()">리뷰 달기</button>
+    </div>
+
+    {% for review in reviews %}
+        <div class="review-box">
+            <div class="user-id">{{ review.user_id }}</div>
+            <div class="review-cotent">{{ review.content }}</div>
+            <button class="delete" onclick="deleteReview({{ review.review_id }})"></button>
+        </div>
+    {% endfor %}
+
+</section>
+
 </body>
 </html>

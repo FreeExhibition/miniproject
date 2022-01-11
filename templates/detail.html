@@ -31,26 +31,24 @@
 <section>
     <div class="exhibition-info">
         <div class="exhibition-img-box">
-{#            <img class="exhibition-img" src="../static/images/test.jpeg" alt="test">#}
-            <img src={{ exhibition.img_url }}>
+            <img src={{ exhibition.imgUrl }}>
         </div>
         <div class="exhibition-detail-box">
             <p>{{ exhibition.title }}</p>
-            <p>{{ exhibition.init_date }} ~ {{ exhibition.end_date }}</p>
-            <p>홈페이지 주소</p>
+            <p>{{ exhibition.initDate }} ~ {{ exhibition.endDate }}</p>
             <p>{{ exhibition.place }}</p>
         </div>
     </div>
     <div class="write-review-box">
-        <input id="inputReview" class="input-review" type="text" maxlength="80" placeholder="리뷰를 달아주세요.">
+        <input id="inputContent" class="input-review" type="text" maxlength="80" placeholder="리뷰를 적어주세요.">
         <button id="addReview" class="add-review" onclick="addReview()">리뷰 달기</button>
     </div>
 
     {% for review in reviews %}
         <div class="review-box">
-            <div class="user-id">{{ review.user_id }}</div>
+            <div class="user-id">{{ review.userId }}</div>
             <div class="review-cotent">{{ review.content }}</div>
-            <button class="delete" onclick="deleteReview({{ review.review_id }})"></button>
+            <button class="delete" onclick="deleteReview({{ review.reviewId }})"></button>
         </div>
     {% endfor %}
 

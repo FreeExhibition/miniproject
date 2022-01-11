@@ -35,12 +35,26 @@ import hashlib
 # HTML을 주는 부분
 @app.route('/')
 def home():
-    return render_template('index.html')
+    tokenReceive = request.cookies.get('mytoken')
+    try:
+        payload = jwt.decode(tokenReceive, SECRET_KEY, algorithms=['HS256'])
+
+        with conn.cursor() as cursor:
+            sql = "SELECT * FROM users where userId = %s"
+            cursor.execute(sql, (payload['userId']))
+            user = cursor.fetchone()
+
+        return render_template('index.html', userId=user[1], token=tokenReceive)
+    except jwt.ExpiredSignatureError:
+        return redirect(url_for("login", msg="로그인 시간이 만료되었습니다."))
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("login", msg="로그인 정보가 존재하지 않습니다."))
 
 
 @app.route('/login')
 def login():
-    return render_template('login.html')
+    msg = request.args.get("msg")
+    return render_template('login.html', msg=msg)
 
 
 @app.route('/register')
@@ -77,7 +91,7 @@ def apiRegister():
 # [로그인 API]
 # id, pw를 받아서 맞춰보고, 토큰을 만들어 발급합니다.
 @app.route('/users/login', methods=['POST'])
-def api_login():
+def apiLogin():
     idReceive = request.form['id_give']
     pwReceive = request.form['pw_give']
 
@@ -87,10 +101,7 @@ def api_login():
     with conn.cursor() as cursor:
         sql = "SELECT * FROM users where userId = %s AND userPw = %s"
         cursor.execute(sql, (idReceive, pwHash))
-        users = cursor.fetchall()
-        for user in users:
-            result = user
-            print(result)
+        result = cursor.fetchone()
 
     # 찾으면 JWT 토큰을 만들어 발급합니다.
     if result is not None:
@@ -99,18 +110,21 @@ def api_login():
         # 아래에선 id와 exp를 담았습니다. 즉, JWT 토큰을 풀면 유저ID 값을 알 수 있습니다.
         # exp에는 만료시간을 넣어줍니다. 만료시간이 지나면, 시크릿키로 토큰을 풀 때 만료되었다고 에러가 납니다.
         payload = {
-            'id': idReceive,
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=5)
+            'userId': idReceive,
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=60)
         }
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+
+        with conn.cursor() as cursor:
+            sql = "UPDATE users SET userId=%s WHERE userToken=%s"
+            cursor.execute(sql, (idReceive, token))
+            conn.commit()
 
         # token을 줍니다.
         return jsonify({'result': 'success', 'token': token})
     # 찾지 못하면
     else:
         return jsonify({'result': 'fail', 'msg': '아이디/비밀번호가 일치하지 않습니다.'})
-
-
 
 
 if __name__ == '__main__':

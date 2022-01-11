@@ -67,8 +67,8 @@ def register():
 # 저장하기 전에, pw를 sha256 방법(=단방향 암호화. 풀어볼 수 없음)으로 암호화해서 저장합니다.
 @app.route('/users/register', methods=['POST'])
 def apiRegister():
-    idReceive = request.form['id_give']
-    pwReceive = request.form['pw_give']
+    idReceive = request.form['userId_give']
+    pwReceive = request.form['userPw_give']
     pwHash = hashlib.sha256(pwReceive.encode('utf-8')).hexdigest()
 
     with conn.cursor() as cursor:
@@ -77,6 +77,17 @@ def apiRegister():
         conn.commit()
         return jsonify({'result': 'success'})
 
+@app.route('/users/checkDup', methods=['POST'])
+def checkDup():
+    userReceive = request.form['userid_give']
+
+    with conn.cursor() as cursor:
+        sql = "SELECT * FROM users where userId = %s"
+        cursor.execute(sql, (userReceive))
+        user = cursor.fetchone()
+        exists = bool(user)
+
+    return jsonify({'result': 'success', 'exists': exists})
 
 # [로그인 API]
 # userId, pwd를 받아서 맞춰보고, 토큰을 만들어 발급합니다.

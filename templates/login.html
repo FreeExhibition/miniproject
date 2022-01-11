@@ -63,7 +63,7 @@
                 url: "/users/login",
                 data: {
                     id_give: $('#userId').val(),
-                    pw_give: $('#userPw').val()
+                    pw_give: $('#pwd').val()
                 },
                 success: function (response) {
                     if (response['result'] == 'success') {
@@ -106,7 +106,7 @@
             </div>
             <div class="field">
                 <p class="control has-icons-left">
-                    <input id="userPw" class="input is-rounded" type="password" placeholder="비밀번호">
+                    <input id="pwd" class="input is-rounded" type="password" placeholder="비밀번호">
                     <span class="icon is-small is-left">
                       <i class="fas fa-lock"></i>
                     </span>

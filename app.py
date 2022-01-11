@@ -44,15 +44,14 @@ def home():
         return render_template('index.html', userId=user[0], token=tokenReceive)
 
     except jwt.ExpiredSignatureError:
-        return redirect(url_for("login", msg="로그인 시간이 만료되었습니다."))
+        return redirect(url_for("login"))
     except jwt.exceptions.DecodeError:
-        return redirect(url_for("login", msg="로그인 정보가 존재하지 않습니다."))
+        return redirect(url_for("login"))
 
 
 @app.route('/login')
 def login():
-    msg = request.args.get("msg")
-    return render_template('login.html', msg=msg)
+    return render_template('login.html')
 
 
 @app.route('/register')
@@ -63,7 +62,7 @@ def register():
 # 로그인, 회원가입을 위한 API
 
 # [회원가입 API]
-# uesrId, pwd를 받아서, DB에 저장합니다.
+# uesrId, userPwd를 받아서, DB에 저장합니다.
 # 저장하기 전에, pw를 sha256 방법(=단방향 암호화. 풀어볼 수 없음)으로 암호화해서 저장합니다.
 @app.route('/users/register', methods=['POST'])
 def apiRegister():
@@ -72,7 +71,7 @@ def apiRegister():
     pwHash = hashlib.sha256(pwReceive.encode('utf-8')).hexdigest()
 
     with conn.cursor() as cursor:
-        sql = "INSERT INTO users (userId,pwd) VALUES (%s,%s)"
+        sql = "INSERT INTO users (userId,userPwd) VALUES (%s,%s)"
         cursor.execute(sql, (idReceive, pwHash))
         conn.commit()
         return jsonify({'result': 'success'})
@@ -90,16 +89,16 @@ def checkDup():
     return jsonify({'result': 'success', 'exists': exists})
 
 # [로그인 API]
-# userId, pwd를 받아서 맞춰보고, 토큰을 만들어 발급합니다.
+# userId, userPwd를 받아서 맞춰보고, 토큰을 만들어 발급합니다.
 @app.route('/users/login', methods=['POST'])
 def apiLogin():
-    idReceive = request.form['id_give']
-    pwReceive = request.form['pw_give']
+    idReceive = request.form['userId_give']
+    pwReceive = request.form['userPw_give']
     pwHash = hashlib.sha256(pwReceive.encode('utf-8')).hexdigest()
 
-    # userId, pwd를 DB에서 찾습니다.
+    # userId, userPwd를 DB에서 찾습니다.
     with conn.cursor() as cursor:
-        sql = "SELECT * FROM users where userId = %s AND pwd = %s"
+        sql = "SELECT * FROM users where userId = %s AND userPwd = %s"
         cursor.execute(sql, (idReceive, pwHash))
         result = cursor.fetchone()
 
@@ -111,15 +110,15 @@ def apiLogin():
         # exp에는 만료시간을 넣어줍니다. 만료시간이 지나면, 시크릿키로 토큰을 풀 때 만료되었다고 에러가 납니다.
         payload = {
             'userId': idReceive,
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=300)
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=60 * 60 * 24)
         }
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
 
-        # 토큰값을 users DB에 저장하여 줍니다.
-        with conn.cursor() as cursor:
-            sql = "UPDATE users SET jwtToken=%s WHERE userId=%s"
-            cursor.execute(sql, (token, idReceive))
-            conn.commit()
+        # # 토큰값을 users DB에 저장하여 줍니다.
+        # with conn.cursor() as cursor:
+        #     sql = "UPDATE users SET jwtToken=%s WHERE userId=%s"
+        #     cursor.execute(sql, (token, idReceive))
+        #     conn.commit()
 
         # token을 줍니다.
         return jsonify({'result': 'success', 'token': token})

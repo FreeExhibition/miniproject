@@ -28,6 +28,16 @@ import hashlib
 
 @app.route('/detail/<id>')
 def getDetail(id):
+    tokenReceive = request.cookies.get('mytoken')
+
+    payload = jwt.decode(tokenReceive, SECRET_KEY, algorithms=['HS256'])
+
+    # userId를 DB에서 찾는다.
+    getUsrIdSql = "SELECT * FROM users where userId = %s"
+    cursor.execute(getUsrIdSql, (payload['userId']))
+    user = cursor.fetchone()
+    print(user);
+
     getIdSql = "select exhibitionId from exhibitions where exhibitionId =%s"
 
     cursor.execute(getIdSql, id)
@@ -50,7 +60,8 @@ def getDetail(id):
     reviews = cursor.fetchall()
     print(reviews)
 
-    return render_template("detail.html", exhibition=exhibition, reviews=reviews)
+    return render_template("detail.html", exhibition=exhibition, reviews=reviews, user = user, token =tokenReceive)
+
 
 
 @app.route('/reviews', methods=['POST'])

@@ -45,11 +45,18 @@
     </div>
 
     {% for review in reviews %}
+        {% if user.userId == review.userId %}
         <div class="review-box">
             <div class="user-id">{{ review.userId }}</div>
             <div class="review-cotent">{{ review.content }}</div>
             <button class="delete" onclick="deleteReview({{ review.reviewId }})"></button>
         </div>
+        {% else %}
+        <div class="review-box">
+            <div class="user-id">{{ review.userId }}</div>
+            <div class="review-cotent">{{ review.content }}</div>
+        </div>
+        {% endif %}
     {% endfor %}
 
 </section>

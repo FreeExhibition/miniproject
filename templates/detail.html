@@ -35,10 +35,10 @@
             <a href="/"><img src="../static/logo.png" alt="전시프리" width="150"></a>
         </div>
         <div class="nav-right">
-            <button onclick="window.location.href='/register'" type="button" class="button is-primary is-inverted">
+            <button id="regBtn" onclick="window.location.href='/register'" type="button" class="button is-primary is-inverted">
                 회원가입
             </button>
-            <button window.location.href='/login'" type="button" class="button is-primary">로그인</button>
+            <button id="loginBtn" onclick="window.location.href='/login'" type="button" class="button is-primary">로그인</button>
         </div>
     </nav>
     <section>
@@ -60,22 +60,6 @@
 
 
         <div id="reviewBox" class="box">
-            {#            {% for review in reviews %}#}
-            {#                {% if user.userId == review.userId %}#}
-            {#                    <div class="review-box">#}
-            {#                        <div>#}
-            {#                            <strong class="user-id">{{ review.userId }}</strong>#}
-            {#                            <p class="review-cotent">{{ review.content }}</p>#}
-            {#                        </div>#}
-            {#                        <button class="delete" onclick="deleteReview({{ review.reviewId }})"></button>#}
-            {#                    </div>#}
-            {#                {% else %}#}
-            {#                    <div class="review-box">#}
-            {#                        <p class="user-id">{{ review.userId }}</p>#}
-            {#                        <p class="review-cotent">{{ review.content }}</p>#}
-            {#                    </div>#}
-            {#                {% endif %}#}
-            {#            {% endfor %}#}
         </div>
 
     </section>

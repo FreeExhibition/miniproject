@@ -21,52 +21,13 @@
             margin:10px
         }
 
-        .float-left{
-            float: left;
-        }
-
-
-        section {
-            min-width: 1200px;
-            min-height: 500px;
-        }
-
-
-        .footer-box p {
-            color: #999;
-        }
-
-        .positioned {
-            position: relative;
-            top: 30px;
-            left: 30px;
+        section{
+            align-content: flex-end;
+            min-width: 500px;
         }
 
     </style>
     <script>
-        $(document).ready(function ()){
-
-
-        }
-
-
-        function goMypage(){
-            $.ajax({
-                type: "POST",
-                url: "/users",
-                data: {
-                    userId_give: userId,
-                    userPw_give: userPwd
-                },
-                success: function (response) {
-
-                    window.location.replace("/mypage")
-                }
-            });
-        }
-        //토큰 없이 접근하려할때 비정상적 접근이라 알림 띄워주기
-
-
 
     </script>
 </head>
@@ -89,16 +50,16 @@
 <section>
     <h2>나의 한줄평</h2>
 
-{% for review in range (n) %}
+{% for i in range (n) %}
     <div class="card mb-3" style="float">
         <div class="row g-0">
             <div class="col-md-4">
-                <img src="{{review[1]}}" class="card-img-exhibition" alt="전시회 사진">
+                <img src="{{reviews[i][9]}}" class="card-img-exhibition" alt="전시회 사진">
             </div>
             <div class="col-md-8">
                 <div class="card-body">
-                    <h5 class="card-title">{{review[2]}}</h5>
-                    <p class="card-text">{{review[0]}}</p>
+                    <h5 class="card-title">{{reviews[i][5]}}</h5>
+                    <p class="card-text">{{reviews[i][3]}}</p>
                 </div>
             </div>
         </div>

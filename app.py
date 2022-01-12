@@ -125,6 +125,7 @@ def apiLogin():
 
 
 
+
 ##마이페이지 자신이 쓴 리뷰 보여주기
 ##자신이 찜 한 장소 보여주기
 @app.route('/mypage')
@@ -133,7 +134,6 @@ def mypage():
 
     try:
         payload = jwt.decode(tokenReceive, SECRET_KEY, algorithms=['HS256'])
-
         # userId를 DB에서 찾는다.
         with conn.cursor() as cursor:
 
@@ -150,14 +150,14 @@ def mypage():
 
             cursor.execute(sql2)
             sssibal = cursor.fetchall()
-            reviews = ()
             n = 0
             for ssibal in sssibal:
                 if ssibal[0] is None: break
                 n += 1
-            print(n)
 
-            return render_template('mypage.html', likes = likes, reviews = reviews, n = n)
+            print(sssibal)
+
+            return render_template('mypage.html', likes = likes, reviews = sssibal, n = n)
 
     except jwt.ExpiredSignatureError:
         return redirect(url_for("login"))

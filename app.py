@@ -28,50 +28,49 @@ import hashlib
 
 @app.route('/detail/<id>')
 def getDetail(id):
-    try:
+    getIdSql = "select exhibitionId from exhibitions where exhibitionId =%s"
 
-        getIdSql = "select exhibitionId from exhibitions where exhibitionId =%s"
+    cursor.execute(getIdSql, id)
 
-        cursor.execute(getIdSql, id)
+    getId = cursor.fetchone();
+    print(getId)
 
-        getId = cursor.fetchone();
-        print(getId)
+    if not getId: return render_template("index.html")
 
-        if not getId: return render_template("index.html")
+    getExhibitionSql = "select * from exhibitions where exhibitionId = %s"
 
-        getExhibitionSql = "select * from exhibitions where exhibitionId = %s"
+    cursor.execute(getExhibitionSql, id)
 
-        cursor.execute(getExhibitionSql, id)
+    exhibition = cursor.fetchone()
+    print(exhibition)
 
-        exhibition = cursor.fetchone()
-        print(exhibition)
+    return render_template("detail.html", exhibition=exhibition)
 
-
-
-        return render_template("detail.html", exhibition=exhibition)
-
-    except jwt.ExpiredSignatureError:
-        return redirect(url_for("login", msg="로그인 시간이 만료되었습니다."))
-    except jwt.exceptions.DecodeError:
-        return redirect(url_for("login", msg="로그인 정보가 존재하지 않습니다."))
 
 @app.route('/reviews/<id>', methods=['GET'])
-def getReview(id):
-    tokenReceive = request.cookies.get('mytoken')
-
-    payload = jwt.decode(tokenReceive, SECRET_KEY, algorithms=['HS256'])
-
-    getUsrIdSql = "SELECT * FROM users where userId = %s"
-    cursor.execute(getUsrIdSql, (payload['userId']))
-    user = cursor.fetchone()
-    print(user);
+def getReviews(id):
+    # tokenReceive = request.cookies.get('mytoken')
+    #
+    # payload = jwt.decode(tokenReceive, SECRET_KEY, algorithms=['HS256'])
+    #
+    # getUsrIdSql = "SELECT * FROM users where userId = %s"
+    # cursor.execute(getUsrIdSql, (payload['userId']))
+    # user = cursor.fetchone()
+    # print(user);
 
     getReviewSql = "select * from reviews where exhibitionId =%s"
     cursor.execute(getReviewSql, id)
 
     reviews = cursor.fetchall()
     print(reviews)
-    return jsonify({'allReviews':reviews, 'token' : tokenReceive, 'userId': user})
+    # return jsonify({'allReviews': reviews, 'token': tokenReceive, 'userId': user})
+    return jsonify({'allReviews': reviews})
+
+
+# def validateToken():
+#     tokenReceive = request.cookies.get('mytoken')
+#     validate = jwt.decode(tokenReceive, SECRET_KEY, algorithms=['HS256'])
+#     print(validate)
 
 
 @app.route('/reviews', methods=['POST'])
@@ -80,8 +79,10 @@ def postReview():
 
         tokenReceive = request.cookies.get('mytoken')
 
-        payload = jwt.decode(tokenReceive, SECRET_KEY, algorithms=['HS256'])
+        print(tokenReceive)
 
+        payload = jwt.decode(tokenReceive, SECRET_KEY, algorithms=['HS256'])
+        print(payload)
         with conn.cursor() as cursor:
             getUsrIdSql = "SELECT * FROM users where userId = %s"
             cursor.execute(getUsrIdSql, (payload['userId']))
@@ -102,7 +103,7 @@ def postReview():
             conn.commit()
             return jsonify({'msg': '리뷰 작성'})
     except jwt.ExpiredSignatureError:
-        return redirect(url_for("login", msg="로그인 시간이 만료되었습니다."))
+        return jsonify({'msg': '안돼'})
     except jwt.exceptions.DecodeError:
         return redirect(url_for("login", msg="로그인 정보가 존재하지 않습니다."))
 
@@ -123,27 +124,34 @@ def deleteReview(id):
     return jsonify({'msg': '삭제 완료!'})
 
 
-# HTML을 주는 부분
+#
+# # HTML을 주는 부분
 @app.route('/')
 def home():
+    # tokenReceive = request.cookies.get('mytoken')
+    #
+    # return render_template('index.html', token=tokenReceive)
     # 쿠키에서 토큰 받아올 때
-    tokenReceive = request.cookies.get('mytoken')
+    # tokenReceive = request.cookies.get('mytoken')
+    #
+    # try:
+    #     payload = jwt.decode(tokenReceive, SECRET_KEY, algorithms=['HS256'])
+    #
+    #     # userId를 DB에서 찾는다.
+    #     with conn.cursor() as cursor:
+    #         sql = "SELECT * FROM users where userId = %s"
+    #         cursor.execute(sql, (payload['userId']))
+    #         user = cursor.fetchone()
 
-    try:
-        payload = jwt.decode(tokenReceive, SECRET_KEY, algorithms=['HS256'])
+    return render_template('index.html')
+    # return render_template('index.html', userId=user[0], token=tokenReceive)
 
-        # userId를 DB에서 찾는다.
-        with conn.cursor() as cursor:
-            sql = "SELECT * FROM users where userId = %s"
-            cursor.execute(sql, (payload['userId']))
-            user = cursor.fetchone()
 
-        return render_template('index.html', userId=user[0], token=tokenReceive)
-
-    except jwt.ExpiredSignatureError:
-        return redirect(url_for("login", msg="로그인 시간이 만료되었습니다."))
-    except jwt.exceptions.DecodeError:
-        return redirect(url_for("login", msg="로그인 정보가 존재하지 않습니다."))
+#     #
+#     # except jwt.ExpiredSignatureError: // 2
+#     #     return redirect(url_for("login", msg="로그인 시간이 만료되었습니다."))
+#     # except jwt.exceptions.DecodeError: // 3
+#     #     return redirect(url_for("login", msg="로그인 정보가 존재하지 않습니다."))
 
 
 @app.route('/login')
@@ -197,7 +205,7 @@ def apiLogin():
         # exp에는 만료시간을 넣어줍니다. 만료시간이 지나면, 시크릿키로 토큰을 풀 때 만료되었다고 에러가 납니다.
         payload = {
             'userId': idReceive,
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=300)
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=120)
         }
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
 
@@ -208,7 +216,7 @@ def apiLogin():
             conn.commit()
 
         # token을 줍니다.
-        return jsonify({'result': 'success', 'token': token})
+        return jsonify({'result': 'success', 'token': token, 'userId': idReceive})
     # 찾지 못하면
     else:
         return jsonify({'result': 'fail', 'msg': '아이디/비밀번호가 일치하지 않습니다.'})

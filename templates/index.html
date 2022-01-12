@@ -7,10 +7,10 @@
     <title>전시프리 - 서울 무료 전시회</title>
 
     <!--  favicon  -->
-    <link rel="icon" type="image/png" sizes="32x32" href="static/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="static/favicon/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="static/favicon/favicon-16x16.png">
-    <link rel="manifest" href="static/favicon/manifest.json">
+    <link rel="icon" type="image/png" sizes="32x32" href="../static/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="../static/favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../static/favicon/favicon-16x16.png">
+    <link rel="manifest" href="../static/favicon/manifest.json">
     <meta name="theme-color" content="#ffffff">
 
     <!--  Bulma CSS, Font Awesome  -->
@@ -34,6 +34,7 @@
             alert('로그아웃!')
             window.location.href='/'
         }
+
     </script>
 </head>
 <body>
@@ -49,7 +50,8 @@
     </div>
 </nav>
 <section>
-    메인 컨텐츠 시작
+    <button onclick="window.location.href='/detail/1'" type="button" class="button is-primary">상세페이지1</button>
+    <button onclick="window.location.href='/detail/2'" type="button" class="button is-primary">상세페이지2</button>
 </section>
 <!--  푸터  -->
 <footer class="footer footer-box">

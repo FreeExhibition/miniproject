@@ -32,8 +32,6 @@ function getReview() {
         data: {},
         success: function (response) {
             const allReviews = response['allReviews'];
-            // const token = response['token'];
-            // const user = response['userId'].userId;
             console.log(allReviews)
             allReviews.map((review) => {
                 let {userId, content, reviewId} = review;

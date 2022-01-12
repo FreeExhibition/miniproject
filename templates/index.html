@@ -60,7 +60,7 @@
                                                 </div>
                                             </div>
                                             <div class="card-footer">
-                                                <a class="card-footer-item" href="">찜하기</a>
+                                                <a id="wishBtn" onclick="toWish()" class="card-footer-item" href="#">찜하기</a>
                                             </div>
                                         </div>
                                     </div>`
@@ -73,11 +73,12 @@
         $(document).ready(function() {
             let token = document.cookie.split('=')[0];
             if (token) {
-                $('#loginBtn').text('로그아웃')
-                $('#regBtn').text('마이페이지')
+                $('#loginBtn').text('로그아웃').attr("onclick","logout()")
+                $('#regBtn').text('마이페이지').attr("onclick", "window.location.href='/mypage'")
                 return
             }
         })
+
 
         // 로그아웃은 내가 가지고 있는 토큰만 쿠키에서 없애면 됩니다.
         function logout(){

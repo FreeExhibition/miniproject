@@ -1,0 +1,78 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+}
+
+button {
+    margin: 10px;
+}
+
+.header-box {
+    text-align: center;
+    margin: 100px 0;
+}
+
+.right-nav {
+    position: absolute;
+    right: 100px;
+    top: 100px;
+    display: flex;
+
+}
+
+.exhibition-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+}
+
+.exhibition-img {
+    width: 200px;
+}
+
+.exhibition-detail-box {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/*.exhibition-detail-box > p {*/
+/*    font-size: 20px;*/
+/*}*/
+
+.write-review-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.input-review {
+    width: 30%;
+}
+
+.review-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 auto;
+    padding: 5px;
+    border-bottom: 1px solid #03d1b2;
+}
+
+.box {
+    margin: 20px auto;
+    width: 70%;
+}
+
+.footer-box p {
+            color: #999;
+}
+

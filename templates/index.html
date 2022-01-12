@@ -2,9 +2,58 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>전시프리 - 서울 무료 전시회</title>
+
+    <!--  Bulma CSS, Font Awesome  -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+          integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+
+    <!--  style  -->
+    <style>
+        .header-box {
+            text-align: center;
+            margin: 60px 0;
+        }
+
+        .header-box h1 {
+            font-size: 42px;
+        }
+
+        .header-box h5 {
+            font-size: 18px;
+            padding-top: 10px;
+        }
+
+
+    </style>
+
+    <!--  Jquery  -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+
+    <!--  javascript  -->
+    <script>
+        // 로그아웃은 내가 가지고 있는 토큰만 쿠키에서 없애면 됩니다.
+        function logout(){
+            $.removeCookie('mytoken');
+            alert('로그아웃!')
+            window.location.href='/'
+        }
+
+        function goMypage(){
+
+        }
+
+
+    </script>
 </head>
 <body>
-
+<h5 class="subtitle">나의 아이디는: {{userId}}</h5>
+<h5 class="subtitle">토큰: {{token}}</h5>
+<button class="button is-primary" onclick="logout()">로그아웃하기</button>
+<button class="button is-primary" onclick="">mypage</button>
 </body>
 </html>

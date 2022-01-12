@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>전시프리 - 서울 무료 전시회</title>
+
+    <!--  Bulma CSS, Font Awesome  -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+          integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+
+    <!--  style  -->
+    <style>
+        .header-box {
+            text-align: center;
+            margin: 100px 0;
+        }
+
+        section {
+            min-height: 400px;
+        }
+
+        .link-box {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .login-box {
+            width: 70%;
+            max-width: 400px;
+            margin: auto;
+        }
+
+        .login-btn {
+            display: block;
+            margin: auto;
+        }
+
+        .footer-box p {
+            color: #999;
+        }
+    </style>
+
+    <!--  Jquery  -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+
+    <!--  javascript  -->
+    <script>
+        function login() {
+            let userId = $("#userId").val()
+            let userPwd = $("#userPwd").val()
+
+            if (userId == "") {
+                $("#helpIdLogin").text("아이디를 입력해주세요.")
+                $("#userId").focus()
+                return;
+            } else {
+                $("#helpIdLogin").text("")
+            }
+
+            if (userPwd == "") {
+                $("#helpPwLogin").text("비밀번호를 입력해주세요.")
+                $("#userPwd").focus()
+                return;
+            } else {
+                $("#helpPwLogin").text("")
+            }
+            $.ajax({
+                type: "POST",
+                url: "/users/login",
+                data: {
+                    userId_give: userId,
+                    userPw_give: userPwd
+                },
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        $.cookie('mytoken', response['token'], {path: '/'});
+                        window.location.replace("/")
+                    } else {
+                        alert(response['msg'])
+                    }
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+<div class="wrap">
+    <header class="header-box">
+        <h1 class="title is-3 is-spaced"><a href="/">전시프리</a></h1>
+        <p>무료한 일상 속에서 전시회로 마음의 평화를 찾아보세요.</p>
+    </header>
+    <section>
+        <div class="link-box">
+            <p>회원이 아직 아니신가요? <a href="/register">회원가입 하기</a></p>
+        </div>
+        <div class="login-box">
+            <div class="field">
+                <p class="control has-icons-left has-icons-right">
+                    <input id="userId" class="input" type="text" placeholder="아이디">
+                    <span class="icon is-small is-left">
+                      <i class="fas fa-user"></i>
+                    </span>
+                </p>
+                <p class="help" id="helpIdLogin"></p>
+            </div>
+            <div class="field">
+                <p class="control has-icons-left">
+                    <input id="userPwd" class="input" type="password" placeholder="비밀번호">
+                    <span class="icon is-small is-left">
+                      <i class="fas fa-lock"></i>
+                    </span>
+                </p>
+                <p class="help" id="helpPwLogin"></p>
+            </div>
+            <button onclick="login()" class="button login-btn is-primary">로그인하기</button>
+        </div>
+    </section>
+    <footer class="footer footer-box">
+        <p class="content has-text-centered">&copy; 2022 항해99 5D 12팀</p>
+    </footer>
+</div>
+</body>
+</html>

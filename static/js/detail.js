@@ -1,6 +1,7 @@
 // 로그인 버튼 클릭 시 로그인 화면 이동
 window.onload = () => {
     getReview();
+    renderNav();
 }
 
 function login() {
@@ -8,15 +9,21 @@ function login() {
 }
 
 function logout() {
-    $.removeCookie('mytoken', {path: '/'});
-    window.location.reload()
-
-    alert('로그아웃!');
+    console.log($.removeCookie('mytoken', {path: '/'}))
+    alert('로그아웃!')
+    window.location.reload();
 }
 
-function moveMypage() {
 
-    window.location.href = '/mypage';
+function renderNav() {
+    const token = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('mytoken='));
+    if (token) {
+        $('#loginBtn').text('로그아웃').attr("onclick", "logout()")
+        $('#regBtn').text('마이페이지').attr("onclick", "window.location.href='/mypage'")
+        return
+    }
 }
 
 function getReview() {
@@ -25,16 +32,15 @@ function getReview() {
     const id = window.location.pathname.split('/')[2]
     let token = document.cookie.split('=')[0];
     const user = localStorage.getItem('userId')
-    console.log(id, token, user)
+
     $.ajax({
         type: "GET",
         url: `/reviews/${id}`,
         data: {},
         success: function (response) {
             const allReviews = response['allReviews'];
-            console.log(allReviews)
             allReviews.map((review) => {
-                let {userId, content, reviewId} = review;
+                let {user_id2: userId, content, review_id: reviewId} = review;
                 if (token && userId === user) {
                     const temp_html = `<div class="review-box">
                         <div>

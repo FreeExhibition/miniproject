@@ -13,19 +13,6 @@ button {
     margin: 10px;
 }
 
-.header-box {
-    text-align: center;
-    margin: 100px 0;
-}
-
-.right-nav {
-    position: absolute;
-    right: 100px;
-    top: 100px;
-    display: flex;
-
-}
-
 .exhibition-info {
     display: flex;
     justify-content: center;

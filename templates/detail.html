@@ -1,45 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!--  favicon  -->
+    <link rel="icon" type="image/png" sizes="32x32" href="../static/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="../static/favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../static/favicon/favicon-16x16.png">
+    <link rel="manifest" href="../static/favicon/manifest.json">
+    <meta name="theme-color" content="#ffffff">
+
     <!--  Bulma CSS, Font Awesome  -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
           integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
 
+    <!--  style  -->
+    <link rel="stylesheet" href="../static/css/style.css">
+
+    <!--  Jquery  -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
 
-    <title>전시프리 - 서울 무료 전시회</title>
-    <link rel="stylesheet" href="../static/css/detail.css">
+    <!--  script  -->
     <script src="../static/js/detail.js" defer></script>
+
+    <title>전시프리 - 서울 무료 전시회</title>
+
 </head>
 
 <body>
 <div class="detail-wrapper">
-    <header class="header-box">
-        <h1 class="title is-3 is-spaced"><a href="/">전시프리</a></h1>
-        <p>무료한 일상 속에서 전시회로 마음의 평화를 찾아보세요.</p>
-        <div id="rightNav" class="right-nav">
-{#            {% if token %}#}
-                <button class="button is-primary" onclick="logout()">로그아웃</button>
-{#                <button class="button is-primary" onclick="moveMypage()">내정보</button>#}
-{#            {% else %}#}
-{#                <button class="button is-primary" onclick="login()">로그인</button>#}
-{#            {% endif %}#}
+    <nav class="nav-container">
+        <div class="nav-left">
+            <a href="/"><img src="../static/logo.png" alt="전시프리" width="150"></a>
         </div>
-    </header>
+        <div class="nav-right">
+            <button onclick="window.location.href='/register'" type="button" class="button is-primary is-inverted">
+                회원가입
+            </button>
+            <button window.location.href='/login'" type="button" class="button is-primary">로그인</button>
+        </div>
+    </nav>
     <section>
         <div class="exhibition-info">
             <div class="exhibition-img-box">
-                <img src={{ exhibition.imgUrl }}>
+                <img src={{ exhibition.img_url }}>
             </div>
             <div class="exhibition-detail-box">
-                <p>{{ exhibition.title }}</p>
-                <p>{{ exhibition.initDate }} ~ {{ exhibition.endDate }}</p>
-                <p>{{ exhibition.place }}</p>
+                <strong>{{ exhibition.title }}</strong>
+                <strong>{{ exhibition.init_date }} ~ {{ exhibition.end_date }}</strong>
+                <strong>{{ exhibition.place }}</strong>
             </div>
         </div>
         <div class="write-review-box">
@@ -50,22 +60,22 @@
 
 
         <div id="reviewBox" class="box">
-{#            {% for review in reviews %}#}
-{#                {% if user.userId == review.userId %}#}
-{#                    <div class="review-box">#}
-{#                        <div>#}
-{#                            <strong class="user-id">{{ review.userId }}</strong>#}
-{#                            <p class="review-cotent">{{ review.content }}</p>#}
-{#                        </div>#}
-{#                        <button class="delete" onclick="deleteReview({{ review.reviewId }})"></button>#}
-{#                    </div>#}
-{#                {% else %}#}
-{#                    <div class="review-box">#}
-{#                        <p class="user-id">{{ review.userId }}</p>#}
-{#                        <p class="review-cotent">{{ review.content }}</p>#}
-{#                    </div>#}
-{#                {% endif %}#}
-{#            {% endfor %}#}
+            {#            {% for review in reviews %}#}
+            {#                {% if user.userId == review.userId %}#}
+            {#                    <div class="review-box">#}
+            {#                        <div>#}
+            {#                            <strong class="user-id">{{ review.userId }}</strong>#}
+            {#                            <p class="review-cotent">{{ review.content }}</p>#}
+            {#                        </div>#}
+            {#                        <button class="delete" onclick="deleteReview({{ review.reviewId }})"></button>#}
+            {#                    </div>#}
+            {#                {% else %}#}
+            {#                    <div class="review-box">#}
+            {#                        <p class="user-id">{{ review.userId }}</p>#}
+            {#                        <p class="review-cotent">{{ review.content }}</p>#}
+            {#                    </div>#}
+            {#                {% endif %}#}
+            {#            {% endfor %}#}
         </div>
 
     </section>

@@ -54,9 +54,9 @@
     <script>
         function register() {
             let userId = $("#userId").val()
-            let userPwd = $("#userPwd").val()
+            let pwd = $("#pwd").val()
             let pwdCheck = $("#pwdCheck").val()
-            console.log(userId, userPwd, pwdCheck)
+            console.log(userId, pwd, pwdCheck)
 
             if ($("#helId").hasClass("is-danger")) {
                 alert("아이디를 다시 확인해주세요.")
@@ -66,13 +66,13 @@
                 return;
             }
 
-            if (userPwd == "") {
+            if (pwd == "") {
                 $("#helpPw").text("비밀번호를 입력해주세요.").removeClass("is-safe").addClass("is-danger")
-                $("#userPwd").focus()
+                $("#pwd").focus()
                 return;
-            } else if (!is_password(userPwd)) {
+            } else if (!is_password(pwd)) {
                 $("#helpPw").text("비밀번호 형식을 확인해주세요. 영문과 숫자 필수 포함, 특수문자(!@#$%^&*) 사용가능 8-20자").removeClass("is-safe").addClass("is-danger")
-                $("#userPwd").focus()
+                $("#pwd").focus()
                 return
             } else {
                 $("#helpPw").text("사용할 수 있는 비밀번호입니다.").removeClass("is-danger").addClass("is-success")
@@ -81,7 +81,7 @@
                 $("#helpPwCheck").text("비밀번호를 다시 입력해주세요.").removeClass("is-safe").addClass("is-danger")
                 $("#pwdCheck").focus()
                 return;
-            } else if (pwdCheck != userPwd) {
+            } else if (pwdCheck != pwd) {
                 $("#helpPwCheck").text("비밀번호가 일치하지 않습니다.").removeClass("is-safe").addClass("is-danger")
                 $("#pwdCheck").focus()
                 return;
@@ -93,7 +93,7 @@
                 url: "/users/register",
                 data: {
                     userId_give: userId,
-                    userPw_give: userPwd
+                    userPw_give: pwd
                 },
                 success: function (response) {
                     alert("회원가입을 축하드립니다!")
@@ -176,7 +176,7 @@
             </div>
             <div class="field">
                 <p class="control has-icons-left">
-                    <input id="userPwd" class="input" type="password" placeholder="비밀번호">
+                    <input id="pwd" class="input" type="password" placeholder="비밀번호">
                     <span class="icon is-small is-left">
                       <i class="fas fa-lock"></i>
                     </span>

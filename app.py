@@ -62,7 +62,7 @@ def register():
 # 로그인, 회원가입을 위한 API
 
 # [회원가입 API]
-# uesrId, userPwd를 받아서, DB에 저장합니다.
+# uesrId, pwd를 받아서, DB에 저장합니다.
 # 저장하기 전에, pw를 sha256 방법(=단방향 암호화. 풀어볼 수 없음)으로 암호화해서 저장합니다.
 @app.route('/users/register', methods=['POST'])
 def apiRegister():
@@ -71,7 +71,7 @@ def apiRegister():
     pwHash = hashlib.sha256(pwReceive.encode('utf-8')).hexdigest()
 
     with conn.cursor() as cursor:
-        sql = "INSERT INTO users (userId,userPwd) VALUES (%s,%s)"
+        sql = "INSERT INTO users (userId,pwd) VALUES (%s,%s)"
         cursor.execute(sql, (idReceive, pwHash))
         conn.commit()
         return jsonify({'result': 'success'})
@@ -89,16 +89,16 @@ def checkDup():
     return jsonify({'result': 'success', 'exists': exists})
 
 # [로그인 API]
-# userId, userPwd를 받아서 맞춰보고, 토큰을 만들어 발급합니다.
+# userId, pwd를 받아서 맞춰보고, 토큰을 만들어 발급합니다.
 @app.route('/users/login', methods=['POST'])
 def apiLogin():
     idReceive = request.form['userId_give']
     pwReceive = request.form['userPw_give']
     pwHash = hashlib.sha256(pwReceive.encode('utf-8')).hexdigest()
 
-    # userId, userPwd를 DB에서 찾습니다.
+    # userId, pwd를 DB에서 찾습니다.
     with conn.cursor() as cursor:
-        sql = "SELECT * FROM users where userId = %s AND userPwd = %s"
+        sql = "SELECT * FROM users where userId = %s AND pwd = %s"
         cursor.execute(sql, (idReceive, pwHash))
         result = cursor.fetchone()
 

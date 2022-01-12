@@ -10,9 +10,8 @@
           integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+
     <title>전시프리 - 서울 무료 전시회</title>
     <link rel="stylesheet" href="../static/css/detail.css">
     <script src="../static/js/detail.js" defer></script>
@@ -21,45 +20,59 @@
 <body>
 <div class="detail-wrapper">
     <header class="header-box">
-        <h1>전시 프리</h1>
-        <h5>무료한 일상 속에서 전시회로 마음의 평화를 찾아보세요.</h5>
-        <div class="right-nav">
-            <button id="loginBtn" onclick="moveLoginPage()">로그인</button>
+        <h1 class="title is-3 is-spaced"><a href="/">전시프리</a></h1>
+        <p>무료한 일상 속에서 전시회로 마음의 평화를 찾아보세요.</p>
+        <div id="rightNav" class="right-nav">
+{#            {% if token %}#}
+{#                <button class="button is-primary" onclick="logout()">로그아웃</button>#}
+{#                <button class="button is-primary" onclick="moveMypage()">내정보</button>#}
+{#            {% else %}#}
+{#                <button class="button is-primary" onclick="login()">로그인</button>#}
+{#            {% endif %}#}
         </div>
     </header>
+    <section>
+        <div class="exhibition-info">
+            <div class="exhibition-img-box">
+                <img src={{ exhibition.imgUrl }}>
+            </div>
+            <div class="exhibition-detail-box">
+                <p>{{ exhibition.title }}</p>
+                <p>{{ exhibition.initDate }} ~ {{ exhibition.endDate }}</p>
+                <p>{{ exhibition.place }}</p>
+            </div>
+        </div>
+        <div class="write-review-box">
+            <input id="inputContent" class="input is-rounded input-review" type="text" placeholder="리뷰를 적어주세요."
+                   maxlength="80">
+            <button id="addReview" class="button is-primary" onclick="addReview()">리뷰 작성</button>
+        </div>
+
+
+        <div id="reviewBox" class="box">
+            {% for review in reviews %}
+                {% if user.userId == review.userId %}
+                    <div class="review-box">
+                        <div>
+                            <strong class="user-id">{{ review.userId }}</strong>
+                            <p class="review-cotent">{{ review.content }}</p>
+                        </div>
+                        <button class="delete" onclick="deleteReview({{ review.reviewId }})"></button>
+                    </div>
+                {% else %}
+                    <div class="review-box">
+                        <p class="user-id">{{ review.userId }}</p>
+                        <p class="review-cotent">{{ review.content }}</p>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+    </section>
+
+    <footer class="footer footer-box">
+        <p class="content has-text-centered">&copy; 2022 항해99 5D 12팀</p>
+    </footer>
 </div>
-<section>
-    <div class="exhibition-info">
-        <div class="exhibition-img-box">
-            <img src={{ exhibition.imgUrl }}>
-        </div>
-        <div class="exhibition-detail-box">
-            <p>{{ exhibition.title }}</p>
-            <p>{{ exhibition.initDate }} ~ {{ exhibition.endDate }}</p>
-            <p>{{ exhibition.place }}</p>
-        </div>
-    </div>
-    <div class="write-review-box">
-        <input id="inputContent" class="input-review" type="text" maxlength="80" placeholder="리뷰를 적어주세요.">
-        <button id="addReview" class="add-review" onclick="addReview()">리뷰 달기</button>
-    </div>
-
-    {% for review in reviews %}
-        {% if user.userId == review.userId %}
-        <div class="review-box">
-            <div class="user-id">{{ review.userId }}</div>
-            <div class="review-cotent">{{ review.content }}</div>
-            <button class="delete" onclick="deleteReview({{ review.reviewId }})"></button>
-        </div>
-        {% else %}
-        <div class="review-box">
-            <div class="user-id">{{ review.userId }}</div>
-            <div class="review-cotent">{{ review.content }}</div>
-        </div>
-        {% endif %}
-    {% endfor %}
-
-</section>
-
 </body>
 </html>

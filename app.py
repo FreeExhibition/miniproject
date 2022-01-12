@@ -26,7 +26,23 @@ def home():
 @app.route('/mypage')
 def mypage():
     ## 인코딩 된 값을 디코딩 시켜줄 코드가 필요 여기
+    tokenReceive = request.cookies.get('mytoken')
 
+    # try:
+    #     payload = jwt.decode(tokenReceive, SECRET_KEY, algorithms=['HS256'])
+    #
+    #     # userId를 DB에서 찾는다.
+    #     with conn.cursor() as cursor:
+    #         sql = "SELECT * FROM users where userId = %s"
+    #         cursor.execute(sql, (payload['userId']\))
+    #         user = cursor.fetchone()
+    #
+    #     return render_template('index.html', userId=user[0], token=tokenReceive)
+    #
+    # except jwt.ExpiredSignatureError:
+    #     return redirect(url_for("login", msg="로그인 시간이 만료되었습니다."))
+    # except jwt.exceptions.DecodeError:
+    #     return redirect(url_for("login", msg="로그인 정보가 존재하지 않습니다."))
 
 
     ##likes
@@ -36,7 +52,8 @@ def mypage():
     sql = "SELECT initDate, endDate, title, imgUrl " \
           "FROM mini.wishlist RIGHT JOIN mini.exhibition " \
           "on wishlist.exhibitionId2 = exhibition.exhibitionId " \
-          "where userId2 = 'test'"
+          "where userId2 = 'test'" ## = %s payload('[userId]')
+
 
 
     ##review
@@ -45,12 +62,15 @@ def mypage():
     sql2 = "SELECT content, imgUrl, title " \
            "FROM mini.review RIGHT JOIN mini.exhibition " \
            "on review.exhibitionId2 = exhibition.exhibitionId " \
-           "where userId2 = 'test'" ##payload('[userId]')
+           "where userId2 = 'test'" #payload('[userId]')
+
 
     curs.execute(sql)
+    #curs.execute(sql('userId'))
     likes = curs.fetchall()
 
     curs.execute(sql2)
+    #curs.execute(sql2 ('userId'))
     reviews = curs.fetchall()
 
     return render_template('mypage.html', likes = likes, reviews = reviews)

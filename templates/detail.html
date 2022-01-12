@@ -50,22 +50,22 @@
 
 
         <div id="reviewBox" class="box">
-            {% for review in reviews %}
-                {% if user.userId == review.userId %}
-                    <div class="review-box">
-                        <div>
-                            <strong class="user-id">{{ review.userId }}</strong>
-                            <p class="review-cotent">{{ review.content }}</p>
-                        </div>
-                        <button class="delete" onclick="deleteReview({{ review.reviewId }})"></button>
-                    </div>
-                {% else %}
-                    <div class="review-box">
-                        <p class="user-id">{{ review.userId }}</p>
-                        <p class="review-cotent">{{ review.content }}</p>
-                    </div>
-                {% endif %}
-            {% endfor %}
+{#            {% for review in reviews %}#}
+{#                {% if user.userId == review.userId %}#}
+{#                    <div class="review-box">#}
+{#                        <div>#}
+{#                            <strong class="user-id">{{ review.userId }}</strong>#}
+{#                            <p class="review-cotent">{{ review.content }}</p>#}
+{#                        </div>#}
+{#                        <button class="delete" onclick="deleteReview({{ review.reviewId }})"></button>#}
+{#                    </div>#}
+{#                {% else %}#}
+{#                    <div class="review-box">#}
+{#                        <p class="user-id">{{ review.userId }}</p>#}
+{#                        <p class="review-cotent">{{ review.content }}</p>#}
+{#                    </div>#}
+{#                {% endif %}#}
+{#            {% endfor %}#}
         </div>
 
     </section>

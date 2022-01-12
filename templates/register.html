@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://example.com/page.html">
+    <meta property="og:title" content="Content Title">
+    <meta property="og:image" content="https://example.com/image.jpg">
+    <meta property="og:description" content="Description Here">
+    <meta property="og:site_name" content="Site Name">
+    <meta property="og:locale" content="en_US">
+    <!-- 다음의 태그는 필수는 아니지만, 포함하는 것을 추천함 -->
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
+    <!--  favicon  -->
+    <link rel="icon" type="image/png" sizes="32x32" href="static/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="static/favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="static/favicon/favicon-16x16.png">
+    <link rel="manifest" href="static/favicon/manifest.json">
+    <meta name="theme-color" content="#ffffff">
+
+    <!--  타이틀  -->
+    <title>전시프리 - 서울 무료 전시회</title>
+
+    <!--  Bulma CSS, Font Awesome  -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+          integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+
+    <!--  style  -->
+    <link rel="stylesheet" href="static/css/style.css">
+
+    <!--  Jquery  -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+
+    <!--  javascript  -->
+    <script src="static/js/register.js"></script>
+</head>
+<body>
+<div class="wrap">
+    <header class="header-box">
+        <a href="/"><img src="static/logo.png" alt="전시프리" width="150"></a>
+        <p>무료한 일상 속에서 전시회로 마음의 평화를 찾아보세요.</p>
+    </header>
+    <section>
+        <div class="link-box">
+            <p>이미 회원이신가요? <a href="/login">로그인 하기</a></p>
+        </div>
+        <div class="register-box">
+            <div class="field">
+                <p class="control has-icons-left has-icons-right">
+                    <input id="userId" class="input user-input" type="text" placeholder="아이디">
+                    <span class="icon is-small is-left">
+                      <i class="fas fa-user"></i>
+                    </span>
+                    <button onclick="checkDup()" class="button is-primary">중복확인</button>
+                </p>
+                <p class="help" id="helpId">아이디는 2~10자의 영문과 숫자로 입력해주세요.</p>
+            </div>
+            <div class="field">
+                <p class="control has-icons-left">
+                    <input id="userPwd" class="input" type="password" placeholder="비밀번호">
+                    <span class="icon is-small is-left">
+                      <i class="fas fa-lock"></i>
+                    </span>
+                </p>
+                <p class="help" id="helpPw">8~20자의 영문과 숫자로 조합된 비밀번호를 설정해주세요.</br>
+                    특수문자(!@#$%^&*) 사용 가능합니다.</p>
+            </div>
+            <div class="field">
+                <p class="control has-icons-left">
+                    <input id="pwdCheck" class="input" type="password" placeholder="비밀번호 확인">
+                    <span class="icon is-small is-left">
+                      <i class="fas fa-lock"></i>
+                    </span>
+                </p>
+                <p class="help" id="helpPwCheck">비밀번호를 다시한번 입력해주세요.</p>
+            </div>
+            <div class="register-btn">
+                <button onclick="register()" class="button is-primary">회원가입하기</button>
+                <button onclick="window.location.href='/'" class="button">홈으로가기</button>
+            </div>
+        </div>
+    </section>
+    <footer class="footer footer-box">
+        <p class="content has-text-centered">&copy; 2022 항해99 5D 12팀 1주차 미니프로젝트</p>
+    </footer>
+</div>
+</body>
+</html>

@@ -32,10 +32,9 @@ import hashlib
 # HTML을 주는 부분
 @app.route('/')
 def home():
-    # 쿠키에서 토큰 받아올 때
-    tokenReceive = request.cookies.get('mytoken')
 
-    return render_template('index.html', token=tokenReceive)
+
+    return render_template('index.html')
 
 
 @app.route('/login')

@@ -25,7 +25,7 @@ def home():
 ##자신이 찜 한 장소 보여주기
 @app.route('/mypage')
 def mypage():
-    ## 인코딩 된 값을 디코딩 시켜줄 코드가 필요
+    ## 인코딩 된 값을 디코딩 시켜줄 코드가 필요 여기
 
 
 
@@ -40,8 +40,8 @@ def mypage():
 
 
     ##review
-    ##review 테이블과 전시 테이블 right join
-    ##userId와 페이로드에 id값이 같은 값들 전부 가져오기
+    ##review 테이블과 전시 테이블 right join~~~
+    ##userId와 페이로드에 id값이 같은 값들 전부 가져오기~
     sql2 = "SELECT content, imgUrl, title " \
            "FROM mini.review RIGHT JOIN mini.exhibition " \
            "on review.exhibitionId2 = exhibition.exhibitionId " \

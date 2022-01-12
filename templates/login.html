@@ -51,7 +51,7 @@
     <script>
         function login() {
             let userId = $("#userId").val()
-            let pwd = $("#pwd").val()
+            let userPwd = $("#userPwd").val()
 
             if (userId == "") {
                 $("#helpIdLogin").text("아이디를 입력해주세요.")
@@ -61,9 +61,9 @@
                 $("#helpIdLogin").text("")
             }
 
-            if (pwd == "") {
+            if (userPwd == "") {
                 $("#helpPwLogin").text("비밀번호를 입력해주세요.")
-                $("#pwd").focus()
+                $("#userPwd").focus()
                 return;
             } else {
                 $("#helpPwLogin").text("")
@@ -73,7 +73,7 @@
                 url: "/users/login",
                 data: {
                     userId_give: userId,
-                    userPw_give: pwd
+                    userPw_give: userPwd
                 },
                 success: function (response) {
                     if (response['result'] == 'success') {
@@ -109,7 +109,7 @@
             </div>
             <div class="field">
                 <p class="control has-icons-left">
-                    <input id="pwd" class="input" type="password" placeholder="비밀번호">
+                    <input id="userPwd" class="input" type="password" placeholder="비밀번호">
                     <span class="icon is-small is-left">
                       <i class="fas fa-lock"></i>
                     </span>

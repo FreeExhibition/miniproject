@@ -32,21 +32,8 @@ def home():
     # 쿠키에서 토큰 받아올 때
     tokenReceive = request.cookies.get('mytoken')
 
-    try:
-        payload = jwt.decode(tokenReceive, SECRET_KEY, algorithms=['HS256'])
+    return render_template('index.html', token=tokenReceive)
 
-        # userId를 DB에서 찾는다.
-        with conn.cursor() as cursor:
-            sql = "SELECT * FROM users where userId = %s"
-            cursor.execute(sql, (payload['userId']))
-            user = cursor.fetchone()
-
-        return render_template('index.html', userId=user[0], token=tokenReceive)
-
-    except jwt.ExpiredSignatureError:
-        return redirect(url_for("login"))
-    except jwt.exceptions.DecodeError:
-        return redirect(url_for("login"))
 
 
 @app.route('/login')

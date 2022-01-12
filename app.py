@@ -26,6 +26,8 @@ import datetime
 # 비밀번호를 암호화하여 DB에 저장
 import hashlib
 
+import random
+
 # HTML을 주는 부분
 @app.route('/')
 def home():
@@ -33,7 +35,6 @@ def home():
     tokenReceive = request.cookies.get('mytoken')
 
     return render_template('index.html', token=tokenReceive)
-
 
 
 @app.route('/login')
@@ -45,6 +46,40 @@ def login():
 def register():
     return render_template('register.html')
 
+
+@app.route('/exhibition', methods=['GET'])
+def exhibition():
+    with conn.cursor() as cursor:
+        cntSql = "SELECT count(*), exhibition_id FROM exhibitions GROUP BY exhibition_id"
+        cursor.execute(cntSql)
+
+        cnt = cursor.fetchall()
+        rowCount = len(cnt)
+        idList = []
+        randNumList = []
+        cardNum = 6
+        resultList = []
+        print(cnt)
+
+        for num in range(0, rowCount - 1):
+            idList.append(cnt[num][1])
+        # print(idList)
+
+        for i in range(0, cardNum):
+            randNum = random.randrange(0, rowCount - 1)
+            while idList[randNum] in randNumList:
+                randNum = random.randrange(0, rowCount - 1)
+            randNumList.append(idList[randNum])
+
+        for j in range(0, cardNum):
+            selectSql = "SELECT * FROM exhibitions WHERE exhibition_id = %s"
+            cursor.execute(selectSql, (randNumList[j]))
+            result = cursor.fetchall()
+            resultList.append(result)
+
+        print(resultList)
+
+    return jsonify({'results': resultList})
 
 # 로그인, 회원가입을 위한 API
 
@@ -58,7 +93,7 @@ def apiRegister():
     pwHash = hashlib.sha256(pwReceive.encode('utf-8')).hexdigest()
 
     with conn.cursor() as cursor:
-        sql = "INSERT INTO users (userId,userPwd) VALUES (%s,%s)"
+        sql = "INSERT INTO users (user_id,user_pwd) VALUES (%s,%s)"
         cursor.execute(sql, (idReceive, pwHash))
         conn.commit()
         return jsonify({'result': 'success'})
@@ -68,7 +103,7 @@ def checkDup():
     userReceive = request.form['userid_give']
 
     with conn.cursor() as cursor:
-        sql = "SELECT * FROM users where userId = %s"
+        sql = "SELECT * FROM users where user_id = %s"
         cursor.execute(sql, (userReceive))
         user = cursor.fetchone()
         exists = bool(user)
@@ -85,7 +120,7 @@ def apiLogin():
 
     # userId, userPwd를 DB에서 찾습니다.
     with conn.cursor() as cursor:
-        sql = "SELECT * FROM users where userId = %s AND userPwd = %s"
+        sql = "SELECT * FROM users where user_id = %s AND user_pwd = %s"
         cursor.execute(sql, (idReceive, pwHash))
         result = cursor.fetchone()
 

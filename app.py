@@ -13,6 +13,7 @@ conn = pymysql.connect(
     charset='utf8'
 )
 
+cursor = conn.cursor(pymysql.cursors.DictCursor);
 
 # JWT 토큰을 만들 때 필요한 비밀문자열
 # 이 문자열은 서버만 알고있기 때문에, 내 서버에서만 토큰을 인코딩(=만들기)/디코딩(=풀기) 할 수 있습니다.
@@ -27,14 +28,13 @@ import datetime
 # 비밀번호를 암호화하여 DB에 저장
 import hashlib
 
+
 # HTML을 주는 부분
 @app.route('/')
 def home():
-    # 쿠키에서 토큰 받아올 때
-    tokenReceive = request.cookies.get('mytoken')
 
-    return render_template('index.html', token=tokenReceive)
 
+    return render_template('index.html')
 
 
 @app.route('/login')
@@ -59,22 +59,24 @@ def apiRegister():
     pwHash = hashlib.sha256(pwReceive.encode('utf-8')).hexdigest()
 
     with conn.cursor() as cursor:
-        sql = "INSERT INTO users (userId,userPwd) VALUES (%s,%s)"
+        sql = "INSERT INTO users (user_id,user_pwd) VALUES (%s,%s)"
         cursor.execute(sql, (idReceive, pwHash))
         conn.commit()
         return jsonify({'result': 'success'})
+
 
 @app.route('/users/checkDup', methods=['POST'])
 def checkDup():
     userReceive = request.form['userid_give']
 
     with conn.cursor() as cursor:
-        sql = "SELECT * FROM users where userId = %s"
+        sql = "SELECT * FROM users where user_id = %s"
         cursor.execute(sql, (userReceive))
         user = cursor.fetchone()
         exists = bool(user)
 
     return jsonify({'result': 'success', 'exists': exists})
+
 
 # [로그인 API]
 # userId, userPwd를 받아서 맞춰보고, 토큰을 만들어 발급합니다.
@@ -86,7 +88,7 @@ def apiLogin():
 
     # userId, userPwd를 DB에서 찾습니다.
     with conn.cursor() as cursor:
-        sql = "SELECT * FROM users where userId = %s AND userPwd = %s"
+        sql = "SELECT * FROM users where user_id = %s AND user_pwd = %s"
         cursor.execute(sql, (idReceive, pwHash))
         result = cursor.fetchone()
 
@@ -113,20 +115,21 @@ def apiLogin():
     # 찾지 못하면
     else:
         return jsonify({'result': 'fail', 'msg': '아이디/비밀번호가 일치하지 않습니다.'})
-      
-      
+
+
 @app.route('/detail/<id>')
 def getDetail(id):
-    getIdSql = "select exhibitionId from exhibitions where exhibitionId =%s"
+    getIdSql = "select exhibition_id from exhibitions where exhibition_id =%s"
 
     cursor.execute(getIdSql, id)
 
     getId = cursor.fetchone();
     print(getId)
 
+
     if not getId: return render_template("index.html")
 
-    getExhibitionSql = "select * from exhibitions where exhibitionId = %s"
+    getExhibitionSql = "select * from exhibitions where exhibition_id = %s"
 
     cursor.execute(getExhibitionSql, id)
 
@@ -138,60 +141,56 @@ def getDetail(id):
 
 @app.route('/reviews/<id>', methods=['GET'])
 def getReviews(id):
-
-    # 토큰의 만료기간이 다되면 만료 오류가 발생하였다
-    # jwt access token 과 refresh token을 사용하거나
-    # 유효성 검사를 만들어 토큰을 재발급하는 함수를 만들고 싶지만 시간이 부족하다
-
-
-    getReviewSql = "select * from reviews where exhibitionId =%s"
+    getReviewSql = "select * from reviews where exhibition_id2 =%s"
     cursor.execute(getReviewSql, id)
 
     reviews = cursor.fetchall()
     print(reviews)
-    # return jsonify({'allReviews': reviews, 'token': tokenReceive, 'userId': user})
+
     return jsonify({'allReviews': reviews})
-
-
-# def validateToken():
-#     tokenReceive = request.cookies.get('mytoken')
-#     validate = jwt.decode(tokenReceive, SECRET_KEY, algorithms=['HS256'])
-#     print(validate)
 
 
 @app.route('/reviews', methods=['POST'])
 def postReview():
     try:
-
         tokenReceive = request.cookies.get('mytoken')
 
-        print(tokenReceive)
-
         payload = jwt.decode(tokenReceive, SECRET_KEY, algorithms=['HS256'])
-        print(payload)
+
         with conn.cursor() as cursor:
-            getUsrIdSql = "SELECT * FROM users where userId = %s"
+
+            getUsrIdSql = "select * from users where user_id = %s"
+
             cursor.execute(getUsrIdSql, (payload['userId']))
+
             user = cursor.fetchone()
+
             print(user);
 
             userId = user[0]
             contentRecieve = request.form['content_give']
             exIdRecieve = request.form['exhibitionId_give']
 
-            postSql = "insert into reviews ( userId,exhibitionId, content) values ( %s, %s, %s)"
+            postSql = "insert into reviews ( user_id2,exhibition_id2, content) values ( %s, %s, %s)"
+
             cursor.execute(postSql, (userId, exIdRecieve, contentRecieve))
+
             setSql = "SET @CNT = 0"
+
             cursor.execute(setSql)
-            sortSql = "UPDATE reviews SET reviews.reviewId = @CNT:=@CNT+1;"
+
+            sortSql = "UPDATE reviews SET reviews.review_id = @CNT:=@CNT+1;"
+
             cursor.execute(sortSql)
 
             conn.commit()
             return jsonify({'msg': '리뷰 작성'})
+        return
+
     except jwt.ExpiredSignatureError:
-        return jsonify({'msg': '안돼'})
+        return jsonify({'msg': '로그인 시간 만료'})
     except jwt.exceptions.DecodeError:
-        return redirect(url_for("login", msg="로그인 정보가 존재하지 않습니다."))
+        return jsonify({'msg': '로그인 정보 없음'})
 
 
 # 작성자가 들어왔을 때 지우는 API
@@ -200,17 +199,16 @@ def postReview():
 @app.route('/reviews/<id>', methods=['DELETE'])
 def deleteReview(id):
     id = request.form['id_give']
-    sql = "delete from reviews where reviewId= %s"
-    cursor.execute(sql, id)
-    setSql = "SET @CNT = 0"
-    cursor.execute(setSql)
-    sortSql = "UPDATE reviews SET reviews.reviewId = @CNT:=@CNT+1;"
-    cursor.execute(sortSql)
-    conn.commit()
+    with conn.cursor() as cursor:
+        sql = "delete from reviews where review_id= %s"
+        cursor.execute(sql, id)
+        setSql = "SET @CNT = 0"
+        cursor.execute(setSql)
+        sortSql = "UPDATE reviews SET reviews.review_id = @CNT:=@CNT+1;"
+        cursor.execute(sortSql)
+        conn.commit()
+
     return jsonify({'msg': '삭제 완료!'})
-
-
-
 
 
 if __name__ == '__main__':

@@ -1,10 +1,84 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>전시프리 - 서울 무료 전시회</title>
+    <!--  favicon  -->
+    <link rel="icon" type="image/png" sizes="32x32" href="../static/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="../static/favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../static/favicon/favicon-16x16.png">
+    <link rel="manifest" href="../static/favicon/manifest.json">
+    <meta name="theme-color" content="#ffffff">
+    <!--  Bulma CSS, Font Awesome  -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+          integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+    <!--  style  -->
+    <link rel="stylesheet" href="../static/css/style.css">
+    <!--  Jquery  -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+    <script>
+        //토큰값으로 로그인, 회원가입 버튼 텍스트 교체
+
+    </script>
+    <script src="../static/js/mypage.js" defer></script>
 </head>
 <body>
-마이페이지
+<nav class="nav-container">
+    <div class="nav-left">
+        <a href="/"><img src="../static/logo.png" alt="전시프리" width="150"></a>
+    </div>
+    <div class="nav-right">
+        <button id="regBtn" onclick="window.location.href='/register'" type="button"
+                class="button is-primary is-inverted">회원가입
+        </button>
+        <button id="loginBtn" onclick="window.location.href='/login'" type="button" class="button is-primary">로그인
+        </button>
+    </div>
+</nav>
+<section>
+    <div class="row columns is-multiline is-mobile add-gap">
+        {% for like in likes %}
+            <div class="card is-fullheight">
+                <div class="exhibition" onclick="window.location.href='/detail/{{ like.exhibition_id }}'">
+                    <div class="card-image">
+                        <figure class="image is-3by4">
+                            <img src={{ like.img_url }} alt="Image">
+                        </figure>
+                    </div>
+                    <div class="card-content">
+                        <div class="media">
+                            <div class="media-content">
+                                <p class="card-header-title">{{ like.title }}</p>
+                                <p>기간: {{ like.init_date }} ~ {{ like.end_date }}</p>
+                                <p>장소: {{ like.place }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+{% for review in reviews %}
+    <div class="box cursor-pointer" onclick="window.location.href='/detail/{{ review.exhibition_id }}'">
+        <article class="media">
+            <div class="media-left">
+                <figure class="image is-64x64">
+                    <img class="my-review-img" src={{ review.img_url }} alt="Image">
+                </figure>
+            </div>
+            <div class="media-content">
+                <div class="content">
+                    <p>
+                        <strong>{{ review.title }}</strong>
+                        <br>
+                        {{ review.content }}
+                    </p>
+                </div>
+            </div>
+        </article>
+    </div>
+{% endfor %}
 </body>
 </html>

@@ -9,8 +9,13 @@ function login() {
 }
 
 function logout() {
-    console.log($.removeCookie('mytoken', {path: '/'}))
+    $.removeCookie('mytoken', {path: '/'});
     alert('로그아웃!')
+    const presentPath = location.pathname
+    let validate = presentPath.split('/')[1];
+    if (validate != ' ') {
+        localStorage.setItem('backPath', presentPath);
+    }
     window.location.reload();
 }
 
@@ -30,7 +35,9 @@ function getReview() {
     $('#reviewBox').empty();
 
     const id = window.location.pathname.split('/')[2]
-    let token = document.cookie.split('=')[0];
+    const token = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('mytoken='));
     const user = localStorage.getItem('userId')
 
     $.ajax({

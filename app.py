@@ -30,12 +30,12 @@ import hashlib
 
 import random
 
+
 # HTML을 주는 부분
 @app.route('/')
 def home():
-
-
     return render_template('index.html')
+
 
 @app.route('/login')
 def login():
@@ -45,11 +45,6 @@ def login():
 @app.route('/register')
 def register():
     return render_template('register.html')
-
-
-@app.route('/mypage')
-def mypage():
-    return render_template('mypage.html')
 
 
 @app.route('/exhibition', methods=['GET'])
@@ -70,7 +65,6 @@ def exhibition():
         for num in range(0, rowCount - 1):
             idList.append(cnt[num][1])
         # print(idList)
-
 
         for i in range(0, cardNum):
             randNum = random.randrange(0, rowCount - 1)
@@ -115,6 +109,7 @@ def like():
                 print(result)
                 conn.commit()
                 return jsonify({'msg': '찜목록에 추가되었습니다!'})
+
 
 @app.route('/user_like', methods=['GET'])
 def userLike():
@@ -207,7 +202,6 @@ def getDetail(id):
     getId = cursor.fetchone();
     print(getId)
 
-
     if not getId: return render_template("index.html")
 
     getExhibitionSql = "select * from exhibitions where exhibition_id = %s"
@@ -278,6 +272,40 @@ def deleteReview(id):
         conn.commit()
 
     return jsonify({'msg': '삭제 완료!'})
+
+
+@app.route('/mypage')
+def mypage():
+
+    tokenReceive = request.cookies.get('mytoken')
+
+    payload = jwt.decode(tokenReceive, SECRET_KEY, algorithms=['HS256'])
+    # userId를 DB에서 찾는다.
+    print(payload)
+
+    sql = "SELECT exhibition_id,init_date, end_date, title, img_url, place " \
+              "FROM mini.wishlist RIGHT JOIN mini.exhibitions "\
+              "on wishlist.exhibition_id2 = exhibitions.exhibition_id " \
+              "where user_id2 = %s"
+
+
+    cursor.execute(sql, (payload['userId']))
+
+    print(cursor)
+
+    likes = cursor.fetchall()
+
+    print(likes)
+
+    getReviewSql = "select e.exhibition_id, e.title, e.img_url, r.content from reviews as r left join exhibitions as e on r.exhibition_id2 = e.exhibition_id where r.user_id2 = %s"
+
+
+    cursor.execute(getReviewSql, (payload['userId']))
+
+    reviews = cursor.fetchall()
+    print(reviews)
+
+    return render_template('mypage.html', likes=likes, reviews=reviews)
 
 
 if __name__ == '__main__':

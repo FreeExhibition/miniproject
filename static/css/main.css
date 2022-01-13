@@ -10,3 +10,10 @@
 .card-footer-item {
     color: #00d1b2;
 }
+.add-gap {
+    gap : 20px;
+}
+.cursor-pointer{
+    cursor: pointer;
+}
+

@@ -7,8 +7,8 @@ import pymysql
 
 conn = pymysql.connect(
     host='localhost',
-    user='root',
-    password='root1234',
+    user='mini',
+    password='mini1234',
     db='mini',
     charset='utf8'
 )
@@ -45,11 +45,6 @@ def login():
 @app.route('/register')
 def register():
     return render_template('register.html')
-
-
-@app.route('/mypage')
-def mypage():
-    return render_template('mypage.html')
 
 
 @app.route('/exhibition', methods=['GET'])
@@ -279,6 +274,39 @@ def deleteReview(id):
 
     return jsonify({'msg': '삭제 완료!'})
 
+
+@app.route('/mypage')
+def mypage():
+
+    tokenReceive = request.cookies.get('mytoken')
+
+    payload = jwt.decode(tokenReceive, SECRET_KEY, algorithms=['HS256'])
+    # userId를 DB에서 찾는다.
+    print(payload)
+
+    sql = "SELECT exhibition_id,init_date, end_date, title, img_url, place " \
+              "FROM mini.wishlist RIGHT JOIN mini.exhibitions "\
+              "on wishlist.exhibition_id2 = exhibitions.exhibition_id " \
+              "where user_id2 = %s"
+
+
+    cursor.execute(sql, (payload['userId']))
+
+    print(cursor)
+
+    likes = cursor.fetchall()
+
+    print(likes)
+
+    getReviewSql = "select e.title, e.img_url, r.content from reviews as r left join exhibitions as e on r.exhibition_id2 = e.exhibition_id where r.user_id2 = %s"
+
+
+    cursor.execute(getReviewSql, (payload['userId']))
+
+    reviews = cursor.fetchall()
+    print(reviews)
+
+    return render_template('mypage.html', likes=likes, reviews=reviews)
 
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)

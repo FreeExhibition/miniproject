@@ -7,10 +7,10 @@
     <title>전시프리 - 서울 무료 전시회</title>
 
     <!--  favicon  -->
-    <link rel="icon" type="image/png" sizes="32x32" href="static/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="static/favicon/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="static/favicon/favicon-16x16.png">
-    <link rel="manifest" href="static/favicon/manifest.json">
+    <link rel="icon" type="image/png" sizes="32x32" href="../static/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="../static/favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../static/favicon/favicon-16x16.png">
+    <link rel="manifest" href="../static/favicon/manifest.json">
     <meta name="theme-color" content="#ffffff">
 
     <!--  Bulma CSS, Font Awesome  -->
@@ -19,14 +19,14 @@
           integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
 
     <!--  style  -->
-    <link rel="stylesheet" href="static/css/style.css">
+    <link rel="stylesheet" href="../static/css/style.css">
 
     <!--  Jquery  -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
 
     <!--  javascript  -->
-    <!--  <script src="static/js/main.js"></script>  -->
+    <!--  <script src="../static/js/main.js"></script>  -->
     <script>
         $.ajax({
             type: "GET",
@@ -94,7 +94,7 @@
 <!--  헤더(로고, 회원가입/로그인 버튼)  -->
 <nav class="nav-container">
     <div class="nav-left">
-        <a href="/"><img src="static/logo.png" alt="전시프리" width="150"></a>
+        <a href="/"><img src="../static/logo.png" alt="전시프리" width="150"></a>
     </div>
     <div class="nav-right">
         <button id="regBtn" onclick="window.location.href='/register'" type="button" class="button is-primary is-inverted">회원가입
@@ -104,6 +104,8 @@
 </nav>
 <section>
     <div id="app" class="row columns is-multiline is-mobile"></div>
+    <button onclick="window.location.href='/detail/1'" type="button" class="button is-primary">상세페이지1</button>
+    <button onclick="window.location.href='/detail/2'" type="button" class="button is-primary">상세페이지2</button>
 </section>
 <!--  푸터  -->
 <footer class="footer footer-box">

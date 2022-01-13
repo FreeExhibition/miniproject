@@ -256,14 +256,6 @@ def postReview():
 
             cursor.execute(postSql, (userId, exIdRecieve, contentRecieve))
 
-            setSql = "SET @CNT = 0"
-
-            cursor.execute(setSql)
-
-            sortSql = "UPDATE reviews SET reviews.review_id = @CNT:=@CNT+1;"
-
-            cursor.execute(sortSql)
-
             conn.commit()
             return jsonify({'msg': '리뷰 작성'})
         return
@@ -281,12 +273,8 @@ def postReview():
 def deleteReview(id):
     id = request.form['id_give']
     with conn.cursor() as cursor:
-        sql = "delete from reviews where review_id= %s"
+        sql = "delete from reviews where exhibition_id2= %s"
         cursor.execute(sql, id)
-        setSql = "SET @CNT = 0"
-        cursor.execute(setSql)
-        sortSql = "UPDATE reviews SET reviews.review_id = @CNT:=@CNT+1;"
-        cursor.execute(sortSql)
         conn.commit()
 
     return jsonify({'msg': '삭제 완료!'})

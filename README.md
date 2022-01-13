@@ -21,26 +21,27 @@
 ## 네이밍 규칙
 
 ### id, 변수명
-- Camel Case 사용
-```js
 
+- Camel Case 사용
+
+```js
 // bad case
 const UserName = 'James';
 
 // good case
 const userName = 'James';
-
 ```
-```html
 
+```html
 // bad case
 <div id="UserName"></div>
 
 // good case
 <div id="userName"></div>
-
 ```
+
 ### 클래스
+
 - kebab-case 사용
 
 ```html
@@ -48,5 +49,5 @@ const userName = 'James';
 <div class="userName"></div>
 
 // good case
-<div class="user-name"> </div>
+<div class="user-name"></div>
 ```

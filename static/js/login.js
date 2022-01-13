@@ -32,6 +32,7 @@ function login() {
                 let path = localStorage.getItem('backPath')
                 console.log(path)
                 if (path) {
+                    localStorage.removeItem('backPath')
                     window.location.assign(path)
                 } else {
                     localStorage.removeItem('backPath')

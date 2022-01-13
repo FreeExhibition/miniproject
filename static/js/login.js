@@ -29,7 +29,14 @@ function login() {
                 $.cookie('mytoken', response['token'], {path: '/'});
                 localStorage.setItem("userId", userId);
 
-                history.back()
+                let path = localStorage.getItem('backPath')
+                if (path) {
+                    localStorage.removeItem('backPath')
+                    window.location.assign(path)
+                } else {
+                    localStorage.removeItem('backPath')
+                    window.location.replace("/")
+                }
             } else {
                 alert(response['msg'])
             }

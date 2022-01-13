@@ -65,8 +65,12 @@ def exhibition():
         cardNum = 6
         resultList = []
 
+        print(cnt)
+
         for num in range(0, rowCount - 1):
             idList.append(cnt[num][1])
+        # print(idList)
+
 
         for i in range(0, cardNum):
             randNum = random.randrange(0, rowCount - 1)
@@ -122,6 +126,7 @@ def userLike():
         result = cursor.fetchall()
         print(result)
     return jsonify({'results': result})
+
 
 # 로그인, 회원가입을 위한 API
 

@@ -53,8 +53,11 @@
                                                 <div class="media">
                                                     <div class="media-content">
                                                         <p class="card-header-title"><a href="#">${title}</a></p>
+
                                                         <p>기간: ${initDate} ~ ${endDate}</p>
                                                         <p>장소: ${place}</p>
+
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -62,6 +65,7 @@
                                                 <a id="${exhibitionId}" onclick="toWish(${exhibitionId})" class="card-footer-item">
                                                     찜하기</i>
                                                 </a>
+
                                             </div>
                                         </div>
                                     </div>`
@@ -69,6 +73,7 @@
                 }
             }
         })
+
 
         //찜하기
         function toWish(param) {
@@ -111,12 +116,14 @@
             }
         })
 
+
         // 로그아웃은 내가 가지고 있는 토큰만 쿠키에서 없애면 됩니다.
         function logout(){
             $.removeCookie('mytoken');
             alert('로그아웃 되었습니다!')
             window.location.href='/'
         }
+
 
     </script>
 </head>

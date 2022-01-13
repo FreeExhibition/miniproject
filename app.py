@@ -2,6 +2,7 @@ from flask import Flask, render_template, jsonify, request, session, redirect, u
 
 app = Flask(__name__)
 
+
 # DB 연결 코드
 import pymysql
 
@@ -28,12 +29,42 @@ import datetime
 # 비밀번호를 암호화하여 DB에 저장
 import hashlib
 
+
+conn = pymysql.connect(
+    host='localhost',
+    user='root',
+    password='1234',
+    db='mini',
+    charset='utf8'
+)
+
 import random
 
 
 # HTML을 주는 부분
 @app.route('/')
 def home():
+
+    # 쿠키에서 토큰 받아올 때
+    tokenReceive = request.cookies.get('mytoken')
+
+    try:
+        payload = jwt.decode(tokenReceive, SECRET_KEY, algorithms=['HS256'])
+
+        # userId를 DB에서 찾는다.
+        with conn.cursor() as cursor:
+            sql = "SELECT * FROM users where user_id = %s"
+            cursor.execute(sql, (payload['user_id']))
+            user = cursor.fetchone()
+
+        return render_template('index.html', user_id=user[0], token=tokenReceive)
+
+    except jwt.ExpiredSignatureError:
+        return redirect(url_for("login"))
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("login"))
+
+
     return render_template('index.html')
 
 
@@ -46,6 +77,11 @@ def login():
 def register():
     return render_template('register.html')
 
+
+
+@app.route('/mypage')
+def mypage():
+    return render_template('mypage.html')
 
 @app.route('/exhibition', methods=['GET'])
 def exhibition():
@@ -111,6 +147,18 @@ def like():
                 conn.commit()
                 return jsonify({'msg': '찜목록에 추가되었습니다!'})
 
+@app.route('/user_like', methods=['GET'])
+def userLike():
+    userId_receive = request.args.get('userId')
+    print(userId_receive)
+    with conn.cursor() as cursor:
+        sql = "SELECT exhibition_id2 FROM WishList WHERE user_id2 = %s"
+        cursor.execute(sql, (userId_receive))
+        result = cursor.fetchall()
+        print(result)
+    return jsonify({'results': result})
+
+
 # 로그인, 회원가입을 위한 API
 
 # [회원가입 API]
@@ -163,6 +211,7 @@ def apiLogin():
         # 아래에선 id와 exp를 담았습니다. 즉, JWT 토큰을 풀면 유저ID 값을 알 수 있습니다.
         # exp에는 만료시간을 넣어줍니다. 만료시간이 지나면, 시크릿키로 토큰을 풀 때 만료되었다고 에러가 납니다.
         payload = {
+
             'userId': idReceive,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=60 * 60 * 24)
         }
@@ -180,6 +229,120 @@ def apiLogin():
     else:
         return jsonify({'result': 'fail', 'msg': '아이디/비밀번호가 일치하지 않습니다.'})
 
+
+@app.route('/mypage')
+def mypage():
+    tokenReceive = request.cookies.get('mytoken')
+
+    try:
+        payload = jwt.decode(tokenReceive, SECRET_KEY, algorithms=['HS256'])
+        # userId를 DB에서 찾는다.
+        with conn.cursor() as cursor:
+
+            sql = "SELECT init_date, end_date, title, img_url " \
+                  "FROM mini.wishlist RIGHT JOIN mini.exhibitions " \
+                  "on wishlist.exhibition_id2 = exhibitions.exhibition_id " \
+                  "where user_id2 = %s"
+
+            sql2 = "SELECT * FROM mini.reviews LEFT JOIN mini.exhibitions ON reviews.exhibition_id2 = exhibitions.exhibition_id UNION SELECT * FROM mini.reviews RIGHT JOIN mini.exhibitions ON reviews.exhibition_id2 = exhibitions.exhibition_id AND reviews.exhibition_id2"
+
+
+            cursor.execute(sql,(payload['user_id']))
+            likes = cursor.fetchall()
+
+            cursor.execute(sql2)
+            sssibal = cursor.fetchall()
+            n = 0
+            for ssibal in sssibal:
+                if ssibal[0] is None: break
+                n += 1
+
+            print(sssibal)
+
+            return render_template('mypage.html', likes = likes, reviews = sssibal, n = n)
+
+    except jwt.ExpiredSignatureError:
+        return redirect(url_for("login"))
+    except jwt.exceptions.DecodeError:
+        return redirect(url_for("login"))
+##마이페이지 자신이 쓴 리뷰 보여주기
+##자신이 찜 한 장소 보여주기
+# @app.route('/mypage')
+# def mypage():
+#     tokenReceive = request.cookies.get('mytoken')
+#
+#     try:
+#         payload = jwt.decode(tokenReceive, SECRET_KEY, algorithms=['HS256'])
+#         # userId를 DB에서 찾는다.
+#         with conn.cursor() as cursor:
+#
+#             sql =  "select e.title, e.img_url, r.content " \
+#                    "from reviews as r left join exhibitions as e " \
+#                    "on r.exhibition_id2 = e.exhibition_id where r.user_id2 = %s"
+#
+#
+#
+#             cursor.execute(sql,(payload['user_id']))
+#             reviews = cursor.fetchall()
+#
+#
+#
+#             return render_template('mypage.html',  reviews = reviews)
+#
+#     except jwt.ExpiredSignatureError:
+#         return redirect(url_for("login"))
+#     except jwt.exceptions.DecodeError:
+#         return redirect(url_for("login"))
+
+
+
+
+@app.route('/deleteLike', methods=['POST'])
+def deleteLike():
+
+    userId_receive = request.form["give_userId"]
+
+    with conn.cursor() as cursor:
+        sql = "Delete exhibition_id2 FROM wishList WHERE user_id2 = %s"
+        cursor.execute(sql, (userId_receive))
+        result = cursor.fetchall()
+    return jsonify({'results' : result})
+
+@app.route('/exhibition', methods=['GET'])
+def exhibition():
+    with conn.cursor() as cursor:
+        cntSql = "SELECT count(*), exhibition_id FROM exhibitions GROUP BY exhibition_id"
+        cursor.execute(cntSql)
+
+        cnt = cursor.fetchall()
+        rowCount = len(cnt)
+        idList = []
+        randNumList = []
+        cardNum = 6
+        resultList = []
+
+        print(cnt)
+
+        for num in range(0, rowCount - 1):
+            idList.append(cnt[num][1])
+        # print(idList)
+
+
+        for i in range(0, cardNum):
+            randNum = random.randrange(0, rowCount - 1)
+            while idList[randNum] in randNumList:
+                randNum = random.randrange(0, rowCount - 1)
+            randNumList.append(idList[randNum])
+
+        for j in range(0, cardNum):
+            selectSql = "SELECT * FROM exhibitions WHERE exhibition_id = %s"
+            cursor.execute(selectSql, (randNumList[j]))
+            result = cursor.fetchall()
+            resultList.append(result)
+
+        print(resultList)
+
+    return jsonify({'results': resultList})
 
 @app.route('/detail/<id>')
 def getDetail(id):
@@ -298,3 +461,4 @@ def mypage():
 
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)
+

@@ -7,10 +7,10 @@
     <title>전시프리 - 서울 무료 전시회</title>
 
     <!--  favicon  -->
-    <link rel="icon" type="image/png" sizes="32x32" href="../static/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="../static/favicon/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="../static/favicon/favicon-16x16.png">
-    <link rel="manifest" href="../static/favicon/manifest.json">
+    <link rel="icon" type="image/png" sizes="32x32" href="static/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="static/favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="static/favicon/favicon-16x16.png">
+    <link rel="manifest" href="static/favicon/manifest.json">
     <meta name="theme-color" content="#ffffff">
 
     <!--  Bulma CSS, Font Awesome  -->
@@ -19,14 +19,14 @@
           integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
 
     <!--  style  -->
-    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="static/css/style.css">
 
     <!--  Jquery  -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
 
     <!--  javascript  -->
-    <!--  <script src="../static/js/main.js"></script>  -->
+    <!--  <script src="static/js/main.js"></script>  -->
     <script>
         $.ajax({
             type: "GET",
@@ -40,7 +40,6 @@
                     let endDate = new Date(exhibition[i][0][3]).toISOString().slice(0,10)
                     let place = exhibition[i][0][4]
                     let imgUrl = exhibition[i][0][5]
-                    let exhibitionId = exhibition[i][0][0]
 
                     let temp_html = `<div class="column is-4">
 
@@ -59,16 +58,12 @@
                                                         <p>기간: ${initDate} ~ ${endDate}</p>
                                                         <p>장소: ${place}</p>
 
-
                                                     </div>
                                                 </div>
                                             </div>
                                             </div>
                                             <div class="card-footer">
-                                                <a id="${exhibitionId}" onclick="toWish(${exhibitionId})" class="card-footer-item">
-                                                    찜하기</i>
-                                                </a>
-
+                                                <a id="wishBtn" onclick="toWish()" class="card-footer-item" href="#">찜하기</a>
                                             </div>
                                         </div>
                                     </div>`
@@ -77,45 +72,13 @@
             }
         })
 
-
-        //찜하기
-        function toWish(param) {
-            let userId = localStorage.getItem('userId')
-            let exhibitionId = param
-
-            $.ajax({
-                type: "POST",
-                url: "/likes",
-                data: {give_userId : userId, give_exhibitionId : exhibitionId},
-                success: function (response) {
-                    alert(response['msg'])
-                    window.location.reload()
-                }
-            })
-
-        }
-
         //토큰값으로 로그인, 회원가입 버튼 텍스트 교체
         $(document).ready(function() {
             let token = document.cookie.split('=')[0];
-            let localId = localStorage.getItem("userId");
-            console.log(localId)
             if (token) {
                 $('#loginBtn').text('로그아웃').attr("onclick","logout()")
                 $('#regBtn').text('마이페이지').attr("onclick", "window.location.href='/mypage'")
-
-                $.ajax({
-                    type: "GET",
-                    url: "/user_like?" + $.param ({"userId" : localId}),
-                    data: {},
-                    success: function (response) {
-                        let wishLists = response['results']
-                        for (let i = 0; i < wishLists.length; i++) {
-                                $(`#${wishLists[i]}`).text('찜하기취소').css('color', '#f14668')
-                        }
-                    }
-                })
-
+                return
             }
         })
 
@@ -134,7 +97,7 @@
 <!--  헤더(로고, 회원가입/로그인 버튼)  -->
 <nav class="nav-container">
     <div class="nav-left">
-        <a href="/"><img src="../static/logo.png" alt="전시프리" width="150"></a>
+        <a href="/"><img src="static/logo.png" alt="전시프리" width="150"></a>
     </div>
     <div class="nav-right">
         <button id="regBtn" onclick="window.location.href='/register'" type="button" class="button is-primary is-inverted">회원가입
@@ -144,7 +107,6 @@
 </nav>
 <section>
     <div id="app" class="row columns is-multiline is-mobile"></div>
-
 </section>
 <!--  푸터  -->
 <footer class="footer footer-box">

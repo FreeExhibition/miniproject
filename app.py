@@ -28,6 +28,7 @@ import datetime
 # 비밀번호를 암호화하여 DB에 저장
 import hashlib
 
+import random
 
 # HTML을 주는 부분
 @app.route('/')
@@ -35,7 +36,6 @@ def home():
 
 
     return render_template('index.html')
-
 
 @app.route('/login')
 def login():
@@ -45,6 +45,74 @@ def login():
 @app.route('/register')
 def register():
     return render_template('register.html')
+
+
+@app.route('/mypage')
+def mypage():
+    return render_template('mypage.html')
+
+
+@app.route('/exhibition', methods=['GET'])
+def exhibition():
+    with conn.cursor() as cursor:
+        cntSql = "SELECT count(*), exhibition_id FROM exhibitions GROUP BY exhibition_id"
+        cursor.execute(cntSql)
+
+        cnt = cursor.fetchall()
+        rowCount = len(cnt)
+        idList = []
+        randNumList = []
+        cardNum = 6
+        resultList = []
+        print(cnt)
+
+        for num in range(0, rowCount - 1):
+            idList.append(cnt[num][1])
+        # print(idList)
+
+        for i in range(0, cardNum):
+            randNum = random.randrange(0, rowCount - 1)
+            while idList[randNum] in randNumList:
+                randNum = random.randrange(0, rowCount - 1)
+            randNumList.append(idList[randNum])
+
+        for j in range(0, cardNum):
+            selectSql = "SELECT * FROM exhibitions WHERE exhibition_id = %s"
+            cursor.execute(selectSql, (randNumList[j]))
+            result = cursor.fetchall()
+            resultList.append(result)
+
+        print(resultList)
+
+    return jsonify({'results': resultList})
+
+# @app.route('/update_like', methods=['POST'])
+# def updateLike():
+#     tokenReceive = request.cookies.get('mytoken')
+#
+#     try:
+#         payload = jwt.decode(tokenReceive, SECRET_KEY, algorithms=['HS256'])
+#         with conn.cursor() as cursor:
+#             sql = "SELECT * FROM users where user_id = %s"
+#             cursor.execute(sql, (payload["id"]))
+#             user_info = cursor.fetchone()
+#             print(user_info)
+#         # post_id_receive = request.form["post_id_give"]
+#         # type_receive = request.form["type_give"]
+#         # action_receive = request.form["action_give"]
+#         # doc = {
+#         #     "post_id": post_id_receive,
+#         #     "username": user_info[0],
+#         #     "type": type_receive
+#         # }
+#         # if action_receive == "like":
+#         #     db.likes.insert_one(doc)
+#         # else:
+#         #     db.likes.delete_one(doc)
+#         # count = db.likes.count_documents({"post_id": post_id_receive, "type": type_receive})
+#         return jsonify({"result": "success"})
+#     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
+#         return redirect(url_for('/'))
 
 
 # 로그인, 회원가입을 위한 API

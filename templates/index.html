@@ -28,12 +28,65 @@
     <!--  javascript  -->
     <!--  <script src="../static/js/main.js"></script>  -->
     <script>
+        $.ajax({
+            type: "GET",
+            url: "/exhibition",
+            data: {},
+            success: function (response) {
+                let exhibition = response['results']
+                for (let i = 0; i < exhibition.length; i++) {
+                    let title = exhibition[i][0][1]
+                    let initDate = new Date(exhibition[i][0][2]).toISOString().slice(0,10)
+                    let endDate = new Date(exhibition[i][0][3]).toISOString().slice(0,10)
+                    let place = exhibition[i][0][4]
+                    let imgUrl = exhibition[i][0][5]
+
+                    let temp_html = `<div class="column is-4">
+                                        <div class="card is-fullheight">
+                                            <div class="card-image">
+                                                <figure class="image is-3by4">
+                                                    <img src="${imgUrl}" alt="Image">
+                                                </figure>
+                                            </div>
+                                            <div class="card-content">
+                                                <div class="media">
+                                                    <div class="media-content">
+                                                        <p class="card-header-title"><a href="#">${title}</a></p>
+
+                                                        <p>기간: ${initDate} ~ ${endDate}</p>
+                                                        <p>장소: ${place}</p>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card-footer">
+                                                <a id="wishBtn" onclick="toWish()" class="card-footer-item" href="#">찜하기</a>
+                                            </div>
+                                        </div>
+                                    </div>`
+                    $('#app').append(temp_html)
+                }
+            }
+        })
+
+        //토큰값으로 로그인, 회원가입 버튼 텍스트 교체
+        $(document).ready(function() {
+            let token = document.cookie.split('=')[0];
+            if (token) {
+                $('#loginBtn').text('로그아웃').attr("onclick","logout()")
+                $('#regBtn').text('마이페이지').attr("onclick", "window.location.href='/mypage'")
+                return
+            }
+        })
+
+
         // 로그아웃은 내가 가지고 있는 토큰만 쿠키에서 없애면 됩니다.
         function logout(){
             $.removeCookie('mytoken');
-            alert('로그아웃!')
+            alert('로그아웃 되었습니다!')
             window.location.href='/'
         }
+
 
     </script>
 </head>
@@ -44,12 +97,13 @@
         <a href="/"><img src="../static/logo.png" alt="전시프리" width="150"></a>
     </div>
     <div class="nav-right">
-        <button onclick="window.location.href='/register'" type="button" class="button is-primary is-inverted">회원가입
+        <button id="regBtn" onclick="window.location.href='/register'" type="button" class="button is-primary is-inverted">회원가입
         </button>
-        <button onclick="window.location.href='/login'" type="button" class="button is-primary">로그인</button>
+        <button id="loginBtn" onclick="window.location.href='/login'" type="button" class="button is-primary">로그인</button>
     </div>
 </nav>
 <section>
+    <div id="app" class="row columns is-multiline is-mobile"></div>
     <button onclick="window.location.href='/detail/1'" type="button" class="button is-primary">상세페이지1</button>
     <button onclick="window.location.href='/detail/2'" type="button" class="button is-primary">상세페이지2</button>
 </section>

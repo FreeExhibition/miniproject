@@ -28,6 +28,7 @@ import datetime
 # 비밀번호를 암호화하여 DB에 저장
 import hashlib
 
+import random
 
 # HTML을 주는 부분
 @app.route('/')
@@ -35,7 +36,6 @@ def home():
 
 
     return render_template('index.html')
-
 
 @app.route('/login')
 def login():
@@ -46,6 +46,82 @@ def login():
 def register():
     return render_template('register.html')
 
+
+@app.route('/mypage')
+def mypage():
+    return render_template('mypage.html')
+
+
+@app.route('/exhibition', methods=['GET'])
+def exhibition():
+    with conn.cursor() as cursor:
+        cntSql = "SELECT count(*), exhibition_id FROM exhibitions GROUP BY exhibition_id"
+        cursor.execute(cntSql)
+
+        cnt = cursor.fetchall()
+        rowCount = len(cnt)
+        idList = []
+        randNumList = []
+        cardNum = 6
+        resultList = []
+
+        for num in range(0, rowCount - 1):
+            idList.append(cnt[num][1])
+
+        for i in range(0, cardNum):
+            randNum = random.randrange(0, rowCount - 1)
+            while idList[randNum] in randNumList:
+                randNum = random.randrange(0, rowCount - 1)
+            randNumList.append(idList[randNum])
+
+        for j in range(0, cardNum):
+            selectSql = "SELECT * FROM exhibitions WHERE exhibition_id = %s"
+            cursor.execute(selectSql, (randNumList[j]))
+            result = cursor.fetchall()
+            resultList.append(result)
+
+        print(resultList)
+
+    return jsonify({'results': resultList})
+
+
+@app.route('/likes', methods=['POST'])
+def like():
+    userId_receive = request.form["give_userId"]
+    exhibitionId_receive = request.form["give_exhibitionId"]
+    with conn.cursor() as cursor:
+        checkSql = "SELECT count(*) FROM users WHERE user_id = %s"
+        cursor.execute(checkSql, (userId_receive))
+        cnt = len(cursor.fetchall())
+        if cnt <= 0:
+            return jsonify({'msg': '찜목록 추가 실패!'})
+        else:
+            dupCheckSql = "SELECT count(*) FROM WishList WHERE exhibition_id2 = %s"
+            cursor.execute(dupCheckSql, int(exhibitionId_receive))
+            cnt2 = cursor.fetchall()
+
+            if cnt2[0][0] != 0:
+                deleteSql = "DELETE FROM WishList WHERE exhibition_id2 = %s"
+                cursor.execute(deleteSql, int(exhibitionId_receive))
+                conn.commit()
+                return jsonify({'msg': '찜목록에서 제거되었습니다!'})
+            else:
+                insertSql = "INSERT INTO WishList VALUES(%s, %s)"
+                result = cursor.execute(insertSql, (userId_receive, int(exhibitionId_receive)))
+                print(result)
+                conn.commit()
+                return jsonify({'msg': '찜목록에 추가되었습니다!'})
+
+@app.route('/user_like', methods=['GET'])
+def userLike():
+    userId_receive = request.args.get('userId')
+    print(userId_receive)
+    with conn.cursor() as cursor:
+        sql = "SELECT exhibition_id2 FROM WishList WHERE user_id2 = %s"
+        cursor.execute(sql, (userId_receive))
+        result = cursor.fetchall()
+        print(result)
+    return jsonify({'results': result})
 
 # 로그인, 회원가입을 위한 API
 

@@ -28,15 +28,7 @@ function login() {
             if (response['result'] == 'success') {
                 $.cookie('mytoken', response['token'], {path: '/'});
                 localStorage.setItem("userId", userId);
-
-                let path = localStorage.getItem('backPath')
-                if (path) {
-                    localStorage.removeItem('backPath')
-                    window.location.assign(path)
-                } else {
-                    localStorage.removeItem('backPath')
-                    window.location.replace("/")
-                }
+                window.location.replace("/")
             } else {
                 alert(response['msg'])
             }

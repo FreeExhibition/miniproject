@@ -2,9 +2,151 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+<<<<<<< HEAD
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>전시프리 - 서울 무료 전시회</title>
+
+    <!--  favicon  -->
+    <link rel="icon" type="image/png" sizes="32x32" href="static/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="static/favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="static/favicon/favicon-16x16.png">
+
+
+    <!--  Bulma CSS, Font Awesome  -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+          integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+
+    <!--  style  -->
+    <link rel="stylesheet" href="static/css/style.css">
+
+    <!--  Jquery  -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+
+    <!--  javascript  -->
+    <!--  <script src="static/js/main.js"></script>  -->
+    <script>
+
+        $.ajax({
+            type: "GET",
+            url: "/exhibition",
+            data: {},
+            success: function (response) {
+                let exhibition = response['results']
+                for (let i = 0; i < exhibition.length; i++) {
+                    let title = exhibition[i][0][1]
+                    let initDate = new Date(exhibition[i][0][2]).toISOString().slice(0,10)
+                    let endDate = new Date(exhibition[i][0][3]).toISOString().slice(0,10)
+                    let place = exhibition[i][0][4]
+                    let imgUrl = exhibition[i][0][5]
+                    let exhibitionId = exhibition[i][0][0]
+
+                    let temp_html = `<div class="column is-4">
+                                        <div class="card is-fullheight">
+                                            <div class="card-image">
+                                                <figure class="image is-3by4">
+                                                    <img src="${img_url}" alt="Image">
+                                                </figure>
+                                            </div>
+                                            <div class="card-content">
+                                                <div class="media">
+                                                    <div class="media-content">
+                                                        <p class="card-header-title"><a href="#">${title}</a></p>
+                                                        <p>기간: ${init_date} ~ ${end_date}</p>
+                                                        <p>장소: ${place}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card-footer">
+                                                <a id="${exhibition_id}" onclick="toWish(${exhibition_id})" class="card-footer-item">
+                                                    삭제하기</i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>`
+                    $('#app').append(temp_html)
+                }
+            }
+        })
+
+        function toWish(param) {
+            let userId = localStorage.getItem('userId')
+            let exhibitionId = param
+
+            $.ajax({
+                type: "POST",
+                url: "/deleteLike",
+                data: {give_userId : userId, give_exhibitionId : exhibitionId},
+                success: function (response) {
+                    alert(response['msg'])
+                    window.location.reload()
+                }
+            })
+
+        }
+
+
+        //토큰값으로 로그인, 회원가입 버튼 텍스트 교체
+        $(document).ready(function() {
+            let token = document.cookie.split('=')[0];
+            if (token) {
+                $('#loginBtn').text('로그아웃').attr("onclick","logout()")
+                $('#regBtn').text('메인페이지').attr("onclick", "window.location.href='/'")
+                return
+            }
+        })
+
+    </script>
+</head>
+<body>
+<!--  헤더(로고, 회원가입/로그인 버튼)  -->
+<nav class="nav-container">
+    <div class="nav-left">
+        <a href="/"><img src="static/logo.png" alt="전시프리" width="150"></a>
+    </div>
+    <div class="nav-right">
+        <button id="regBtn" onclick="window.location.href='/register'" type="button" class="button is-primary is-inverted">회원가입
+        </button>
+        <button id="loginBtn" onclick="window.location.href='/login'" type="button" class="button is-primary">로그인</button>
+    </div>
+</nav>
+<section>
+    <div id="app" class="row columns is-multiline is-mobile"></div>
+
+</section>
+<section>
+    {% for i in range (n) %}
+    <div class="box">
+        <article class="media">
+            <div class="media-left">
+                <figure class="image is-64x64" style="padding: 0px">
+                    <img src="{{reviews[i][9]}}" alt="Image">
+                </figure>
+            </div>
+            <div class="media-content">
+                <div class="content">
+                    <p>
+                        <strong>{{reviews[i][5]}}</strong>
+                        <br>
+                        {{reviews[i][3]}}
+                    </p>
+                </div>
+            </div>
+        </article>
+    </div>
+    {% endfor %}
+</section>
+<!--  푸터  -->
+<footer class="footer footer-box">
+    <p class="content has-text-centered">&copy; 2022 항해99 5D 12팀 1주차 미니프로젝트</p>
+</footer>
+=======
     <title>Title</title>
 </head>
 <body>
 마이페이지
+>>>>>>> 9aeac41bdf8bff8bfc0f82e25e293071de6cff03
 </body>
 </html>

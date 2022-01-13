@@ -124,10 +124,6 @@ def apiLogin():
         return jsonify({'result': 'fail', 'msg': '아이디/비밀번호가 일치하지 않습니다.'})
 
 
-
-
-##마이페이지 자신이 쓴 리뷰 보여주기
-##자신이 찜 한 장소 보여주기
 @app.route('/mypage')
 def mypage():
     tokenReceive = request.cookies.get('mytoken')
@@ -163,6 +159,84 @@ def mypage():
         return redirect(url_for("login"))
     except jwt.exceptions.DecodeError:
         return redirect(url_for("login"))
+##마이페이지 자신이 쓴 리뷰 보여주기
+##자신이 찜 한 장소 보여주기
+# @app.route('/mypage')
+# def mypage():
+#     tokenReceive = request.cookies.get('mytoken')
+#
+#     try:
+#         payload = jwt.decode(tokenReceive, SECRET_KEY, algorithms=['HS256'])
+#         # userId를 DB에서 찾는다.
+#         with conn.cursor() as cursor:
+#
+#             sql =  "select e.title, e.img_url, r.content " \
+#                    "from reviews as r left join exhibitions as e " \
+#                    "on r.exhibition_id2 = e.exhibition_id where r.user_id2 = %s"
+#
+#
+#
+#             cursor.execute(sql,(payload['user_id']))
+#             reviews = cursor.fetchall()
+#
+#
+#
+#             return render_template('mypage.html',  reviews = reviews)
+#
+#     except jwt.ExpiredSignatureError:
+#         return redirect(url_for("login"))
+#     except jwt.exceptions.DecodeError:
+#         return redirect(url_for("login"))
+
+
+
+
+@app.route('/deleteLike', methods=['POST'])
+def deleteLike():
+
+    userId_receive = request.form["give_userId"]
+
+    with conn.cursor() as cursor:
+        sql = "Delete exhibition_id2 FROM wishList WHERE user_id2 = %s"
+        cursor.execute(sql, (userId_receive))
+        result = cursor.fetchall()
+    return jsonify({'results' : result})
+
+@app.route('/exhibition', methods=['GET'])
+def exhibition():
+    with conn.cursor() as cursor:
+        cntSql = "SELECT count(*), exhibition_id FROM exhibitions GROUP BY exhibition_id"
+        cursor.execute(cntSql)
+
+        cnt = cursor.fetchall()
+        rowCount = len(cnt)
+        idList = []
+        randNumList = []
+        cardNum = 6
+        resultList = []
+
+        print(cnt)
+
+        for num in range(0, rowCount - 1):
+            idList.append(cnt[num][1])
+        # print(idList)
+
+
+        for i in range(0, cardNum):
+            randNum = random.randrange(0, rowCount - 1)
+            while idList[randNum] in randNumList:
+                randNum = random.randrange(0, rowCount - 1)
+            randNumList.append(idList[randNum])
+
+        for j in range(0, cardNum):
+            selectSql = "SELECT * FROM exhibitions WHERE exhibition_id = %s"
+            cursor.execute(selectSql, (randNumList[j]))
+            result = cursor.fetchall()
+            resultList.append(result)
+
+        print(resultList)
+
+    return jsonify({'results': resultList})
 
 
 if __name__ == '__main__':

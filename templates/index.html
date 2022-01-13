@@ -42,7 +42,9 @@
                     let imgUrl = exhibition[i][0][5]
 
                     let temp_html = `<div class="column is-4">
+
                                         <div class="card is-fullheight">
+                                            <div class="exhibition" onclick= "window.location.href='/detail/${exhibitionId}'">
                                             <div class="card-image">
                                                 <figure class="image is-3by4">
                                                     <img src="${imgUrl}" alt="Image">
@@ -51,13 +53,14 @@
                                             <div class="card-content">
                                                 <div class="media">
                                                     <div class="media-content">
-                                                        <p class="card-header-title"><a href="#">${title}</a></p>
+                                                        <p class="card-header-title">${title}</p>
 
                                                         <p>기간: ${initDate} ~ ${endDate}</p>
                                                         <p>장소: ${place}</p>
 
                                                     </div>
                                                 </div>
+                                            </div>
                                             </div>
                                             <div class="card-footer">
                                                 <a id="wishBtn" onclick="toWish()" class="card-footer-item" href="#">찜하기</a>

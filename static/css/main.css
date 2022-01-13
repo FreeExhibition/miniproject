@@ -1,7 +1,12 @@
 .card-content {
     min-height: 168px;
 }
-
+.card {
+    max-width: 300px;
+}
+.exhibition {
+    cursor: pointer;
+}
 .card-footer-item {
     color: #00d1b2;
 }

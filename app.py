@@ -28,6 +28,7 @@ import hashlib
 
 import random
 
+
 # HTML을 주는 부분
 @app.route('/')
 def home():
@@ -64,11 +65,9 @@ def exhibition():
         randNumList = []
         cardNum = 6
         resultList = []
-        print(cnt)
 
         for num in range(0, rowCount - 1):
             idList.append(cnt[num][1])
-        # print(idList)
 
         for i in range(0, cardNum):
             randNum = random.randrange(0, rowCount - 1)
@@ -86,34 +85,44 @@ def exhibition():
 
     return jsonify({'results': resultList})
 
-# @app.route('/update_like', methods=['POST'])
-# def updateLike():
-#     tokenReceive = request.cookies.get('mytoken')
-#
-#     try:
-#         payload = jwt.decode(tokenReceive, SECRET_KEY, algorithms=['HS256'])
-#         with conn.cursor() as cursor:
-#             sql = "SELECT * FROM users where user_id = %s"
-#             cursor.execute(sql, (payload["id"]))
-#             user_info = cursor.fetchone()
-#             print(user_info)
-#         # post_id_receive = request.form["post_id_give"]
-#         # type_receive = request.form["type_give"]
-#         # action_receive = request.form["action_give"]
-#         # doc = {
-#         #     "post_id": post_id_receive,
-#         #     "username": user_info[0],
-#         #     "type": type_receive
-#         # }
-#         # if action_receive == "like":
-#         #     db.likes.insert_one(doc)
-#         # else:
-#         #     db.likes.delete_one(doc)
-#         # count = db.likes.count_documents({"post_id": post_id_receive, "type": type_receive})
-#         return jsonify({"result": "success"})
-#     except (jwt.ExpiredSignatureError, jwt.exceptions.DecodeError):
-#         return redirect(url_for('/'))
 
+@app.route('/likes', methods=['POST'])
+def like():
+    userId_receive = request.form["give_userId"]
+    exhibitionId_receive = request.form["give_exhibitionId"]
+    with conn.cursor() as cursor:
+        checkSql = "SELECT count(*) FROM users WHERE user_id = %s"
+        cursor.execute(checkSql, (userId_receive))
+        cnt = len(cursor.fetchall())
+        if cnt <= 0:
+            return jsonify({'msg': '찜목록 추가 실패!'})
+        else:
+            dupCheckSql = "SELECT count(*) FROM WishList WHERE exhibition_id2 = %s"
+            cursor.execute(dupCheckSql, int(exhibitionId_receive))
+            cnt2 = cursor.fetchall()
+
+            if cnt2[0][0] != 0:
+                deleteSql = "DELETE FROM WishList WHERE exhibition_id2 = %s"
+                cursor.execute(deleteSql, int(exhibitionId_receive))
+                conn.commit()
+                return jsonify({'msg': '찜목록에서 제거되었습니다!'})
+            else:
+                insertSql = "INSERT INTO WishList VALUES(%s, %s)"
+                result = cursor.execute(insertSql, (userId_receive, int(exhibitionId_receive)))
+                print(result)
+                conn.commit()
+                return jsonify({'msg': '찜목록에 추가되었습니다!'})
+
+@app.route('/user_like', methods=['GET'])
+def userLike():
+    userId_receive = request.args.get('userId')
+    print(userId_receive)
+    with conn.cursor() as cursor:
+        sql = "SELECT exhibition_id2 FROM WishList WHERE user_id2 = %s"
+        cursor.execute(sql, (userId_receive))
+        result = cursor.fetchall()
+        print(result)
+    return jsonify({'results': result})
 
 # 로그인, 회원가입을 위한 API
 
@@ -132,6 +141,7 @@ def apiRegister():
         conn.commit()
         return jsonify({'result': 'success'})
 
+
 @app.route('/users/checkDup', methods=['POST'])
 def checkDup():
     userReceive = request.form['userid_give']
@@ -143,6 +153,7 @@ def checkDup():
         exists = bool(user)
 
     return jsonify({'result': 'success', 'exists': exists})
+
 
 # [로그인 API]
 # userId, userPwd를 받아서 맞춰보고, 토큰을 만들어 발급합니다.

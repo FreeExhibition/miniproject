@@ -66,6 +66,7 @@ def exhibition():
             idList.append(cnt[num][1])
         # print(idList)
 
+
         for i in range(0, cardNum):
             randNum = random.randrange(0, rowCount - 1)
             while idList[randNum] in randNumList:
@@ -109,19 +110,6 @@ def like():
                 print(result)
                 conn.commit()
                 return jsonify({'msg': '찜목록에 추가되었습니다!'})
-
-
-@app.route('/user_like', methods=['GET'])
-def userLike():
-    userId_receive = request.args.get('userId')
-    print(userId_receive)
-    with conn.cursor() as cursor:
-        sql = "SELECT exhibition_id2 FROM WishList WHERE user_id2 = %s"
-        cursor.execute(sql, (userId_receive))
-        result = cursor.fetchall()
-        print(result)
-    return jsonify({'results': result})
-
 
 # 로그인, 회원가입을 위한 API
 

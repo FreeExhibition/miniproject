@@ -43,7 +43,9 @@
                     let exhibitionId = exhibition[i][0][0]
 
                     let temp_html = `<div class="column is-4">
+
                                         <div class="card is-fullheight">
+                                            <div class="exhibition" onclick= "window.location.href='/detail/${exhibitionId}'">
                                             <div class="card-image">
                                                 <figure class="image is-3by4">
                                                     <img src="${imgUrl}" alt="Image">
@@ -52,7 +54,7 @@
                                             <div class="card-content">
                                                 <div class="media">
                                                     <div class="media-content">
-                                                        <p class="card-header-title"><a href="#">${title}</a></p>
+                                                        <p class="card-header-title">${title}</p>
 
                                                         <p>기간: ${initDate} ~ ${endDate}</p>
                                                         <p>장소: ${place}</p>
@@ -60,6 +62,7 @@
 
                                                     </div>
                                                 </div>
+                                            </div>
                                             </div>
                                             <div class="card-footer">
                                                 <a id="${exhibitionId}" onclick="toWish(${exhibitionId})" class="card-footer-item">
@@ -141,8 +144,7 @@
 </nav>
 <section>
     <div id="app" class="row columns is-multiline is-mobile"></div>
-    <button onclick="window.location.href='/detail/1'" type="button" class="button is-primary">상세페이지1</button>
-    <button onclick="window.location.href='/detail/2'" type="button" class="button is-primary">상세페이지2</button>
+
 </section>
 <!--  푸터  -->
 <footer class="footer footer-box">

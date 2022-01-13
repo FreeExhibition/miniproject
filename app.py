@@ -57,7 +57,7 @@ def exhibition():
     with conn.cursor() as cursor:
         cntSql = "SELECT count(*), exhibition_id FROM exhibitions GROUP BY exhibition_id"
         cursor.execute(cntSql)
-
+        today = datetime.datetime.now()
         cnt = cursor.fetchall()
         rowCount = len(cnt)
         idList = []
@@ -79,8 +79,8 @@ def exhibition():
             randNumList.append(idList[randNum])
 
         for j in range(0, cardNum):
-            selectSql = "SELECT * FROM exhibitions WHERE exhibition_id = %s"
-            cursor.execute(selectSql, (randNumList[j]))
+            selectSql = "SELECT * FROM exhibitions WHERE exhibition_id = %s AND end_date > %s"
+            cursor.execute(selectSql, (randNumList[j], today))
             result = cursor.fetchall()
             resultList.append(result)
 
@@ -100,13 +100,13 @@ def like():
         if cnt <= 0:
             return jsonify({'msg': '찜목록 추가 실패!'})
         else:
-            dupCheckSql = "SELECT count(*) FROM WishList WHERE exhibition_id2 = %s"
-            cursor.execute(dupCheckSql, int(exhibitionId_receive))
+            dupCheckSql = "SELECT count(*) FROM WishList WHERE exhibition_id2 = %s AND user_id2 = %s"
+            cursor.execute(dupCheckSql, (int(exhibitionId_receive), userId_receive))
             cnt2 = cursor.fetchall()
 
             if cnt2[0][0] != 0:
-                deleteSql = "DELETE FROM WishList WHERE exhibition_id2 = %s"
-                cursor.execute(deleteSql, int(exhibitionId_receive))
+                deleteSql = "DELETE FROM WishList WHERE exhibition_id2 = %s AND user_id2 = %s"
+                cursor.execute(deleteSql, (int(exhibitionId_receive), userId_receive))
                 conn.commit()
                 return jsonify({'msg': '찜목록에서 제거되었습니다!'})
             else:

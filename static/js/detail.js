@@ -11,11 +11,7 @@ function login() {
 function logout() {
     $.removeCookie('mytoken', {path: '/'});
     alert('로그아웃!')
-    const presentPath = location.pathname
-    let validate = presentPath.split('/')[1];
-    if (validate != ' ') {
-        localStorage.setItem('backPath', presentPath);
-    }
+
     window.location.reload();
 }
 
